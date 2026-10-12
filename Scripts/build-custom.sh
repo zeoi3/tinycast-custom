@@ -19,7 +19,7 @@ if ! git diff --quiet || ! git diff --cached --quiet ||
 fi
 xcodebuild build -project Tinycast.xcodeproj -scheme Tinycast -configuration Release \
     -derivedDataPath "$derived" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO \
-    SWIFT_COMPILATION_MODE=incremental -jobs "${TINYCAST_BUILD_JOBS:-1}" \
+    SWIFT_COMPILATION_MODE=incremental -jobs "${TINYCAST_BUILD_JOBS:-2}" \
     > build/validation/release-build.log 2>&1
 codesign --force --sign "$identity" --timestamp=none --options runtime \
     --entitlements Tinycast/Tinycast.entitlements "$app"
