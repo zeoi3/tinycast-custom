@@ -98,6 +98,7 @@ struct SettingsBackup: Codable {
         var togglePalette: HotKeyBinding?
         var commands: [String: HotKeyBinding]?
         var apps: [String: HotKeyBinding]?
+        var appleShortcuts: [String: HotKeyBinding]?
         var panes: [String: HotKeyBinding]?
         var customCommands: [String: HotKeyBinding]?
         var systemActions: [String: HotKeyBinding]?
@@ -204,6 +205,10 @@ extension SettingsBackup {
         hotkeys.apps = Dictionary(
             uniqueKeysWithValues: hk.boundBundleIDs.compactMap { id in
                 hk.binding(for: .app(bundleID: id)).map { (id, $0) }
+            })
+        hotkeys.appleShortcuts = Dictionary(
+            uniqueKeysWithValues: hk.boundAppleShortcutIDs.compactMap { id in
+                hk.binding(for: .appleShortcut(id: id)).map { (id.uuidString.lowercased(), $0) }
             })
         hotkeys.panes = Dictionary(
             uniqueKeysWithValues: hk.boundPaneBundleIDs.compactMap { id in
@@ -568,6 +573,10 @@ extension SettingsBackup {
             apply(b, action)
         }
         for (id, b) in hotkeys.apps ?? [:] { apply(b, .app(bundleID: id)) }
+        for (rawID, binding) in hotkeys.appleShortcuts ?? [:] {
+            guard let id = UUID(uuidString: rawID) else { continue }
+            apply(binding, .appleShortcut(id: id))
+        }
         for (id, b) in hotkeys.panes ?? [:] { apply(b, .settingsPane(bundleID: id)) }
         for (rawID, b) in hotkeys.customCommands ?? [:] {
             guard let id = UUID(uuidString: rawID), core.customCommands.command(id: id) != nil else {
