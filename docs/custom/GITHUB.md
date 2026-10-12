@@ -2,7 +2,9 @@
 
 用户已选择：公开 Fork，仓库为 [zeoi3/tinycast-custom](https://github.com/zeoi3/tinycast-custom)，使用本机 GitHub CLI。
 
-2026-10-12：已登录 zeoi3（系统钥匙串），Fork 和 origin 已创建；本次定制提交尚待确认推送。
+2026-10-12：已登录 zeoi3（系统钥匙串），Fork 和 origin 已创建。用户已确认首次推送，
+规划提交 `50f0f03145a0691d86d34470769d0ead328b60f7` 的本地/远程 SHA 已核对一致；
+Fork 默认分支已设为 `custom/zh-cn-lite`。之后每次推送仍按用户确认规则执行。
 本仓库提交身份使用 GitHub noreply 邮箱，仅写入本地 Git 配置，不更改全局作者设置。
 
 ## 与 ChatGPT 的关系
