@@ -174,7 +174,7 @@ final class QuicklinkCoordinator {
         let symbol = quicklink.iconSymbol ?? Quicklink.sfSymbol
         guard let bundleID = failure.missingApplicationBundleID else {
             await core.showNotice(
-                title: "Couldn’t Open \(quicklink.name)",
+                title: L10n.format("Couldn’t Open %@", quicklink.name),
                 message: failure.localizedDescription, symbol: symbol, tone: .danger)
             return
         }
@@ -182,8 +182,8 @@ final class QuicklinkCoordinator {
         let name = applicationName(forBundleID: bundleID) ?? bundleID
         guard
             await core.reportFailure(
-                title: "Couldn’t Open \(quicklink.name)",
-                message: "\(name) isn’t installed any more.", symbol: symbol,
+                title: L10n.format("Couldn’t Open %@", quicklink.name),
+                message: L10n.format("%@ isn’t installed any more.", name), symbol: symbol,
                 recovery: "Open with Default")
         else { return }
         performQuicklinkOpen(quicklink, link: link, forcingDefaultApp: true)
@@ -210,7 +210,7 @@ final class QuicklinkCoordinator {
         if alwaysConfirm || settings.quicklinkConfirmsBeforeDelete {
             guard
                 await core.confirm(
-                    title: "Delete “\(quicklink.name)”?",
+                    title: L10n.format("Delete “%@”?", quicklink.name),
                     message: "Its shortcut, favorite slot and learned ranking go with it.",
                     symbol: quicklink.iconSymbol ?? Quicklink.sfSymbol, confirmTitle: "Delete")
             else { return }
@@ -220,7 +220,8 @@ final class QuicklinkCoordinator {
             try store.remove(id: id)
         } catch {
             await core.showNotice(
-                title: "Couldn’t Delete “\(quicklink.name)”", message: error.localizedDescription,
+                title: L10n.format("Couldn’t Delete “%@”", quicklink.name),
+                message: error.localizedDescription,
                 symbol: quicklink.iconSymbol ?? Quicklink.sfSymbol, tone: .danger)
             return
         }
@@ -360,7 +361,7 @@ final class QuicklinkCoordinator {
         }
         do {
             try QuicklinkArchive.encode(store.quicklinks).write(to: url, options: .atomic)
-            core.showMessage("Exported \(store.quicklinks.count) Quicklinks")
+            core.showMessage(L10n.format("Exported %d Quicklinks", store.quicklinks.count))
         } catch {
             await core.showNotice(
                 title: "Export Failed", message: error.localizedDescription,
@@ -391,8 +392,9 @@ final class QuicklinkCoordinator {
             let skipped = incoming.count - added.count
             let summary =
                 skipped == 0
-                ? "Imported \(added.count) quicklinks."
-                : "Imported \(added.count) quicklinks. Skipped \(skipped) already in your library."
+                ? L10n.format("Imported %d quicklinks.", added.count)
+                : L10n.format(
+                    "Imported %d quicklinks. Skipped %d already in your library.", added.count, skipped)
             await core.showNotice(
                 title: "Quicklinks Imported", message: summary, symbol: Quicklink.sfSymbol,
                 tone: .success)

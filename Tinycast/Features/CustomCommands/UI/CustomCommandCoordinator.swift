@@ -159,7 +159,7 @@ final class CustomCommandCoordinator {
         guard let command = store.command(id: id) else { return }
         guard
             await core.confirm(
-                title: "Delete “\(command.name)”?",
+                title: L10n.format("Delete “%@”?", command.name),
                 message: "Its shortcut, favorite slot and learned ranking go with it.",
                 symbol: command.iconSymbol ?? CustomCommand.sfSymbol, confirmTitle: "Delete")
         else { return }
@@ -225,7 +225,7 @@ final class CustomCommandCoordinator {
     /// Scripts run arbitrary code, so this warns the way a backup of custom commands does.
     private func confirmScriptImport(count: Int) async -> Bool {
         await core.confirm(
-            title: count == 1 ? "Import 1 script?" : "Import \(count) scripts?",
+            title: L10n.format("Import %d scripts?", count),
             message:
                 "Imported commands run these files with your user account. Only import scripts you "
                 + "trust.",
@@ -233,9 +233,9 @@ final class CustomCommandCoordinator {
     }
 
     private func importSummary(added: Int, offered: Int) -> String {
-        let imported = added == 1 ? "Imported 1 command." : "Imported \(added) commands."
+        let imported = L10n.format("Imported %d commands.", added)
         guard offered > added else { return imported }
-        return imported + " Skipped \(offered - added) already in your library."
+        return imported + L10n.format(" Skipped %d already in your library.", offered - added)
     }
 
     // MARK: - Running
@@ -286,7 +286,7 @@ final class CustomCommandCoordinator {
                     // Neutral, not destructive: their own command just wants a second tap.
                     await core.confirm(
                         title: command.name,
-                        message: "Are you sure you want to run this command?\n\n\(command.command)",
+                        message: L10n.format("Run this command?\n\n%@", command.command),
                         symbol: command.symbol, confirmTitle: "Run",
                         tone: .neutral, confirmRole: .standard)
                 else { return }
@@ -356,14 +356,14 @@ final class CustomCommandCoordinator {
         guard !result.succeeded else {
             // What the command said beats a bare "it ran"; on finish, so a slow one reports late.
             if command.showsConfirmation {
-                core.showMessage(result.lastOutputLine ?? "Ran \(command.name)")
+                core.showMessage(result.lastOutputLine ?? L10n.format("Ran %@", command.name))
             }
             return
         }
         let hint = shellEnvironmentHint(command: command, result: result)
         guard
             await core.reportFailure(
-                title: "“\(command.name)” Failed",
+                title: L10n.format("“%@” Failed", command.name),
                 message: failureMessage(command: command, result: result),
                 symbol: command.symbol, recovery: hint == nil ? nil : "Open Settings…")
         else { return }
@@ -375,7 +375,9 @@ final class CustomCommandCoordinator {
         case .launchFailed: return L10n.tr("The shell could not be started.")
         case .stopped: return L10n.tr("Stopped")
         case .exited(let status):
-            return status == 0 ? "Finished successfully." : "The command exited with status \(status)."
+            return status == 0
+                ? L10n.tr("Finished successfully.")
+                : L10n.format("The command exited with status %d.", status)
         }
     }
 

@@ -228,9 +228,9 @@ enum BackupActions {
         if summary.clipboard > 0 { imported.append("\(summary.clipboard) clips") }
         if summary.snippets > 0 { imported.append("\(summary.snippets) snippets") }
         if summary.notes > 0 { imported.append("\(summary.notes) notes") }
-        if summary.learning > 0 { imported.append("\(summary.learning) learning records") }
+        if summary.learning > 0 { imported.append(L10n.format("%d learning records", summary.learning)) }
         if !imported.isEmpty {
-            parts.append("Imported " + imported.joined(separator: ", ") + ".")
+            parts.append(L10n.format("Imported %@.", imported.joined(separator: "、")))
         }
         if summary.snippetsNeedEnabling { parts.append(snippetsNeedEnablingText) }
         parts.append(contentsOf: summary.problems)
@@ -241,24 +241,22 @@ enum BackupActions {
         let categories = BackupCategory.ordered(result.manifest.categories)
         var text =
             categories.isEmpty
-            ? "Nothing was selected."
-            : "Saved "
-                + categories.map(\.descriptor.label)
-                .joined(separator: ", ") + "."
+            ? L10n.tr("Nothing was selected.")
+            : L10n.format("Saved %@.", categories.map { L10n.tr($0.descriptor.label) }.joined(separator: "、"))
         if result.missingImages > 0 {
             text += " \(result.missingImages) images were unavailable and skipped."
         }
         return text
     }
 
-    static let nothingImportedText = "Nothing to import from this file."
+    static let nothingImportedText = L10n.tr("Nothing to import from this file.")
 
     /// No import may grant keystroke listening, so say the switch an imported keyword needs is off.
     private static let snippetsNeedEnablingText =
         "Turn on Snippets in Settings to use their keywords."
 
     /// Not everything an import applies settles in the running app, so say to relaunch.
-    private static let restartAfterImportText = "Quit and reopen Tinycast to finish."
+    private static let restartAfterImportText = L10n.tr("Quit and reopen Tinycast to finish.")
 
     /// One sentence per Raycast category that actually moved, shared by the pane and onboarding.
     static func raycastText(_ outcome: RaycastOutcome) -> String {
@@ -276,11 +274,10 @@ enum BackupActions {
             parts.append("Couldn’t import snippets: \(snippetsError)")
         }
         if outcome.quicklinksImported > 0 {
-            let noun = outcome.quicklinksImported == 1 ? "quicklink" : "quicklinks"
-            parts.append("Imported \(outcome.quicklinksImported) \(noun).")
+            parts.append(L10n.format("Imported %d quicklinks.", outcome.quicklinksImported))
         }
         if let quicklinksError = outcome.quicklinksError {
-            parts.append("Couldn’t import quicklinks: \(quicklinksError)")
+            parts.append(L10n.format("Couldn’t import quicklinks: %@", quicklinksError))
         }
         var message = parts.isEmpty ? nothingImportedText : parts.joined(separator: " ")
         if outcome.missingImages > 0 {
@@ -293,21 +290,21 @@ enum BackupActions {
     /// nil when no settings applied, so a caller can compose one combined sentence.
     static func appliedText(_ s: SettingsBackup.ApplySummary) -> String? {
         var parts: [String] = []
-        if s.settingsFields > 0 { parts.append("\(s.settingsFields) settings") }
-        if s.hotkeys > 0 { parts.append("\(s.hotkeys) shortcuts") }
-        if s.favorites > 0 { parts.append("\(s.favorites) favorites") }
-        if s.hiddenItems > 0 { parts.append("\(s.hiddenItems) hidden items") }
-        if s.aliases > 0 { parts.append("\(s.aliases) aliases") }
+        if s.settingsFields > 0 { parts.append(L10n.format("%d settings", s.settingsFields)) }
+        if s.hotkeys > 0 { parts.append(L10n.format("%d shortcuts", s.hotkeys)) }
+        if s.favorites > 0 { parts.append(L10n.format("%d favorites", s.favorites)) }
+        if s.hiddenItems > 0 { parts.append(L10n.format("%d hidden items", s.hiddenItems)) }
+        if s.aliases > 0 { parts.append(L10n.format("%d aliases", s.aliases)) }
         if s.pinnedEmoji > 0 { parts.append("\(s.pinnedEmoji) pinned emoji and symbols") }
-        if s.customCommands > 0 { parts.append("\(s.customCommands) custom commands") }
-        if s.quicklinks > 0 { parts.append("\(s.quicklinks) quicklinks") }
+        if s.customCommands > 0 { parts.append(L10n.format("%d custom commands", s.customCommands)) }
+        if s.quicklinks > 0 { parts.append(L10n.format("%d quicklinks", s.quicklinks)) }
         if s.windowLayouts > 0 { parts.append("\(s.windowLayouts) window layouts") }
         if s.windowRooms > 0 { parts.append("\(s.windowRooms) rooms") }
         if s.customWindowSizes > 0 {
             parts.append("\(s.customWindowSizes) custom window sizes")
         }
         guard !parts.isEmpty else { return nil }
-        return "Applied " + parts.joined(separator: ", ") + "."
+        return L10n.format("Applied %@.", parts.joined(separator: "、"))
     }
 
     // MARK: - Settings file
@@ -326,8 +323,9 @@ enum BackupActions {
         let choice = await core.choose(
             title: "Import the existing settings file?",
             message:
-                "\(settingsFilePath) already exists. Import applies its settings here; Replace "
-                + "overwrites it with the current ones.",
+                L10n.format(
+                    "%@ already exists. Import applies its settings here; Replace overwrites it with the current ones.",
+                    settingsFilePath),
             symbol: importSymbol,
             options: [
                 DialogAction(title: "Import"),
@@ -352,15 +350,13 @@ enum BackupActions {
         -> Bool
     {
         guard commands > 0 || shortcuts > 0 else { return true }
-        let commandText = commands == 1 ? "1 custom command" : "\(commands) custom commands"
-        let shortcutText =
-            shortcuts == 1 ? "1 global shortcut" : "\(shortcuts) global shortcuts"
         // Red glyph for a real warning, plain button: importing destroys nothing.
         return await core.confirm(
             title: "Import executable commands?",
             message:
-                "This backup contains \(commandText) and \(shortcutText). Custom commands can run "
-                + "arbitrary shell code. Only import files you trust.",
+                L10n.format(
+                    "This backup contains %d custom commands and %d global shortcuts. Only import files you trust.",
+                    commands, shortcuts),
             symbol: importSymbol, confirmTitle: "Import", confirmRole: .standard)
     }
 
