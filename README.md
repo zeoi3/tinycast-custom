@@ -9,6 +9,7 @@ AI 使用网页入口，剪贴板历史与扩展运行时先隐藏停用。以�
 
 - [协作规则与功能范围](AGENTS.md)
 - [项目状态和实施计划](docs/custom/PROJECT.md)
+- [首版实现、验收与打包计划](docs/custom/IMPLEMENTATION.md)
 - [维护与上游修复流程](docs/custom/MAINTENANCE.md)
 - [GitHub 同步与独立授权](docs/custom/GITHUB.md)
 - [上游修复台账](docs/custom/UPSTREAM-FIXES.md)
