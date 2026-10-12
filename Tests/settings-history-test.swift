@@ -114,9 +114,9 @@ struct SettingsHistoryTests {
     static func sidebarCoversEveryPane() {
         let grouped = SettingsSection.allCases.flatMap(\.tabs)
         expect(
-            Set(grouped) == Set(SettingsTab.allCases),
+            Set(grouped.map(\.rawValue)) == ProductProfile.settingsTabs,
             "every pane appears in exactly one sidebar group")
-        expect(grouped.count == SettingsTab.allCases.count, "and none appears twice")
+        expect(grouped.count == ProductProfile.settingsTabs.count, "and none appears twice")
     }
 
     /// A selectable `List` flattens section and row IDs into one namespace.
@@ -149,13 +149,7 @@ struct SettingsHistoryTests {
         let cases: [(String, SettingsTab)] = [
             ("hyper", .general),
             ("caps lock", .general),
-            ("launch at login", .general),
-            ("automatically check for updates", .general),
-            ("popup", .general),
-            ("paste history", .clipboard),
-            ("window manage", .windowManagement),
-            ("skin tone", .emoji),
-            ("mcp", .ai)
+            ("launch at login", .general)
         ]
         for (query, tab) in cases {
             let found = SettingsSearchCatalog.results(for: query).first
@@ -175,8 +169,15 @@ struct SettingsHistoryTests {
 
     /// A term found in the title has to beat the same term found only in a breadcrumb.
     static func catalogRanksTitlesFirst() {
-        let results = SettingsSearchCatalog.results(for: "extensions")
-        expect(results.first?.tab == .extensions, "“extensions” opens on its own pane")
+        let results = SettingsSearchCatalog.results(for: "quicklinks")
+        expect(results.first?.tab == .quicklinks, "“quicklinks” opens on its own pane")
+        for query in ["extensions", "clipboard", "mcp", "dictation"] {
+            expect(
+                SettingsSearchCatalog.results(for: query).allSatisfy {
+                    ProductProfile.settingsTabs.contains($0.tab.rawValue)
+                        && ($0.tab != .ai || $0.target == nil)
+                }, "disabled settings cannot be found: \(query)")
+        }
         expect(
             SettingsSearchCatalog.results(for: "nothing here matches at all").isEmpty,
             "and an unmatched query returns nothing")

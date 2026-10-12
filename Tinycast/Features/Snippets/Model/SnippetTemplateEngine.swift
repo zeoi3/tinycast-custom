@@ -149,6 +149,13 @@ enum SnippetTemplateEngine {
         }
     }
 
+    static func usesClipboard(_ text: String) -> Bool {
+        parseSegments(text).contains { segment in
+            if case .clipboard = segment { return true }
+            return false
+        }
+    }
+
     private static func result(of expansion: Expansion) -> ExpansionResult {
         ExpansionResult(
             text: expansion.text,

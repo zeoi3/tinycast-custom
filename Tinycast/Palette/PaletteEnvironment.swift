@@ -16,6 +16,7 @@ extension View {
             .modifier(InterfaceMetricsScope(settings: core.settings))
             .environment(core)
             .environment(core.settings)
+            .environment(\.locale, Locale(identifier: "zh-Hans"))
             .environment(core.palette)
             .environment(core.appIndex)
             .environment(core.clipboardStore)
@@ -25,8 +26,6 @@ extension View {
             .environment(core.fallbacks)
             .environment(core.calcHistory)
             .environment(core.currencyRates)
-            .environment(core.emojiIndex)
-            .environment(core.frequentEmoji)
             .environment(core.fileSearch)
             .environment(core.dictionary)
             .environment(core.menuSearch)
@@ -35,9 +34,6 @@ extension View {
             .environment(core.hotKeys)
             .environment(core.uninstall)
             .environment(core.quicklinks)
-            .environment(core.snippetsStore)
-            .environment(core.extensions)
-            .environment(core.calendarStore)
-            .environment(core.meetingClock)
+
     }
 }

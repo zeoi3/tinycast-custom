@@ -10,8 +10,11 @@ struct BackupCategorySelection: View {
         repeating: GridItem(.flexible(), spacing: Theme.Spacing.md, alignment: .leading), count: 2)
 
     private var offered: [BackupCategory] {
-        guard let available else { return BackupCategory.allCases }
-        return BackupCategory.allCases.filter { available[$0] != nil }
+        guard let available else {
+            return BackupCategory.allCases.filter { ProductProfile.backupCategories.contains($0.rawValue) }
+        }
+        return BackupCategory.allCases.filter { ProductProfile.backupCategories.contains($0.rawValue) }.filter
+        { available[$0] != nil }
     }
 
     private func included(_ category: BackupCategory) -> Binding<Bool> {
@@ -38,7 +41,7 @@ struct BackupCategorySelection: View {
                             Image(systemName: category.descriptor.symbol)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 16)
-                            Text(category.descriptor.label).lineLimit(1)
+                            Text(L10n.tr(category.descriptor.label)).lineLimit(1)
                             if let subtitle = subtitle(category) {
                                 Text(subtitle)
                                     .foregroundStyle(.secondary)

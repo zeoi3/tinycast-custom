@@ -1,4 +1,4 @@
-enum SettingsTab: CaseIterable, Identifiable {
+enum SettingsTab: String, CaseIterable, Identifiable {
     case general, applications, systemSettings, systemActions, commands, quicklinks, appleShortcuts,
         fallbacks, clipboard, snippets, fileSearch, windowManagement, navigation, notes, calendar, emoji,
         dictation, ai, quickActions, extensions, permissions, backup, about
@@ -78,6 +78,10 @@ enum SettingsSection: CaseIterable, Identifiable {
     }
 
     var tabs: [SettingsTab] {
+        allTabs.filter { ProductProfile.settingsTabs.contains($0.rawValue) }
+    }
+
+    private var allTabs: [SettingsTab] {
         switch self {
         case .general: return [.general, .permissions]
         case .launcher:

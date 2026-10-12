@@ -40,8 +40,8 @@ struct SettingsSearchEntry: Identifiable, Hashable, Sendable {
 
     /// The result row's second line — "General", or "General › Hyper Key".
     var breadcrumb: String {
-        guard let anchor, anchor.title != tab.title else { return tab.title }
-        return "\(tab.title) › \(anchor.title)"
+        guard let anchor, anchor.title != tab.title else { return L10n.tr(tab.title) }
+        return "\(L10n.tr(tab.title)) › \(L10n.tr(anchor.title))"
     }
 }
 
@@ -66,6 +66,12 @@ enum SettingsSearchCatalog {
         // Catalog order is the tie-break, so results don't reshuffle between equal-scoring rows.
         return
             entries
+            .filter { ProductProfile.settingsTabs.contains($0.tab.rawValue) }
+            .filter { !ProductProfile.excludedSettingsRows.contains($0.title) }
+            .filter {
+                ($0.tab != .ai || $0.target == nil)
+                    && ($0.tab != .permissions || $0.anchor == nil || $0.anchor == .permissionsAccessibility)
+            }
             .enumerated()
             .compactMap { item -> (entry: SettingsSearchEntry, score: Int, rank: Int)? in
                 guard let score = score(query, item.element) else { return nil }
@@ -81,7 +87,9 @@ enum SettingsSearchCatalog {
         var titleScore = 0
         var titleMatches = 0
         for term in query.terms {
-            if let match = FuzzyMatch.match(term, candidate: entry.title) {
+            if let match = FuzzyMatch.match(term, candidate: entry.title)
+                ?? FuzzyMatch.match(term, candidate: L10n.tr(entry.title))
+            {
                 titleMatches += 1
                 titleScore += match.score
                 continue
@@ -272,7 +280,7 @@ enum SettingsSearchCatalog {
 
     private static let ai: [SettingsSearchEntry] = [
         .init(
-            pane: .ai, keywords: ["chat", "quick ai", "llm", "model", "openai", "anthropic"]),
+            pane: .ai, keywords: ["website", "ChatGPT", "Claude", "Gemini", "网页", "聊天"]),
         .init(.aiAI, "Enable AI", keywords: ["chat", "llm"]),
         .init(
             .aiProviders, "Providers",

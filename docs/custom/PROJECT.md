@@ -2,7 +2,7 @@
 
 更新日期：2026-10-12。本文是后续接手入口；产品约束以根目录 `AGENTS.md` 为准。
 
-具体阶段、验收和打包交付见 [首版实现计划](IMPLEMENTATION.md)。目前计划待用户确认，尚未开始功能开发。
+具体阶段、验收和打包交付见 [首版实现计划](IMPLEMENTATION.md)。用户已确认执行，目前正在实现与验证；尚未交付安装包。
 
 ## 定位与已作决定
 
@@ -23,11 +23,11 @@
 | 定制规则、计划、维护手册、修复台账 | 本次建立 |
 | 本地 Git 防误推设置 | 通过 `Scripts/setup-custom.sh` 配置；新克隆需重新执行 |
 | GitHub Fork 与首次推送 | 已完成；首个规划提交 `50f0f03` 已核对远程 SHA，默认分支为 `custom/zh-cn-lite`；后续同步状态以本地与远程 HEAD 为准 |
-| 中文界面与搜索本地化 | 未实现 |
-| 功能范围统一约束、后台停用、按需初始化 | 未实现；运行应用仍是上游默认行为 |
-| 独立 Bundle ID、应用名称、签名、更新渠道 | 未实现 |
-| 网页 AI 入口 | 未实现；已确认默认 ChatGPT，支持选择/配置网站 |
-| 编译和实机验证 | 未执行；当前开发目录为 Command Line Tools，未配置完整 Xcode |
+| 中文界面与搜索本地化 | 已加入集中简体中文资源和核心界面接入；待完整界面验收 |
+| 功能范围统一约束、后台停用、按需初始化 | 已实现并通过 Debug 构建；正在完成全套测试和停用服务实测 |
+| 独立 Bundle ID、应用名称、签名、更新渠道 | 已设置 Tinycast Custom / io.github.zeoi3.tinycastcustom；本机签名已创建；移除官方更新入口 |
+| 网页 AI 入口 | 已接入快速链接；默认 ChatGPT，可选择网站；参数解析测试通过，待浏览器实测 |
+| 编译和实机验证 | Xcode 27.0 已初始化；Debug 构建、签名和主界面启动通过；Release 与最终测试进行中 |
 | 安装包 | 尚无定制版安装包 |
 
 ## 实施顺序
@@ -76,3 +76,14 @@
 2. 阅读本文、根目录 AGENTS.md 和 [维护手册](MAINTENANCE.md)。
 3. 核实 GitHub 同步与工具链状态，不凭本表的旧记录假定已就绪。
 4. 从未完成阶段继续；不要自行开始整版升级、剪贴板恢复或扩展开发。
+
+## 本次实现入口与验证记录
+
+- 产品范围：`Tinycast/Platform/ProductProfile.swift`。新功能默认不能进入菜单、命令、热键或导入。
+- 中文：`Tinycast/Platform/L10n.swift` 与 `Tinycast/Resources/zh-Hans.lproj/Localizable.strings`。
+  设置定位保留英文稳定键，显示和搜索同时支持中文。
+- 网页 AI：`Features/WebAI/`；固定 UUID 的快速链接保存网站及参数模板，不增加账号或模型设置。
+- 本地签名：`Scripts/setup-custom-signing.sh`；打包：`Scripts/build-custom.sh`。
+- 已通过：产品策略/网页 AI 请求解析独立测试；quicklink-coordinator-test；Swift 6 语法解析；设置搜索目标静态检查。
+- 首次全套预检期间源码发生变化，且 CLT 缺少 SwiftUI 宏；该运行不能作为基线或最终验收，日志为 `build/validation/preflight-incomplete.log`。
+- 完整 Xcode 已可用。验证详情以 [验证记录](VALIDATION.md) 为准；当前仍需完成最终测试、Release 安装包及资源对比。

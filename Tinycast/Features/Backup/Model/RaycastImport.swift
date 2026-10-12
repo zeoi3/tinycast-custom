@@ -15,8 +15,8 @@ struct RaycastImportOptions: OptionSet, Sendable {
     static let aliases = RaycastImportOptions(rawValue: 1 << 9)
     static let quicklinks = RaycastImportOptions(rawValue: 1 << 10)
     static let all: RaycastImportOptions = [
-        .shortcuts, .favorites, .emojiSkinTone, .launchAtLogin, .menuBarVisibility, .clipboardHistory,
-        .popToRoot, .compactMode, .snippets, .aliases, .quicklinks
+        .shortcuts, .favorites, .launchAtLogin, .menuBarVisibility,
+        .popToRoot, .compactMode, .aliases, .quicklinks
     ]
 }
 
@@ -32,6 +32,7 @@ enum RaycastImport {
 
         /// Trimmed to the chosen categories; `apply()` being per-field, dropping is enough.
         func selecting(_ options: RaycastImportOptions) -> Result {
+            let options = options.intersection(.all)
             var trimmed = SettingsBackup()
             if options.contains(.shortcuts) { trimmed.hotkeys = backup.hotkeys }
             if options.contains(.favorites) { trimmed.favoriteApps = backup.favoriteApps }

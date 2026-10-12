@@ -14,7 +14,7 @@ struct MenuBarMenu: View {
     let appName: String
 
     var body: some View {
-        Button("Open \(appName)") {
+        Button("打开 \(appName)") {
             AppCore.shared.paletteCoordinator.showPalette(mode: .launcher)
         }
         // Read through Observation, so switching the feature off takes the row with it.
@@ -24,12 +24,10 @@ struct MenuBarMenu: View {
             }
         }
         Divider()
-        Button("Check for Updates...") { AppCore.shared.updateCoordinator.checkForUpdates() }
-        Button("Support \(appName)...") { AppCore.shared.supportCoordinator.showSupport() }
-        Button("Settings...") { AppCore.shared.settingsCoordinator.showSettings() }
+        Button(L10n.tr("Settings...")) { AppCore.shared.settingsCoordinator.showSettings() }
             .keyboardShortcut(",")
         Divider()
         // No ⌘Q: the app menu binds it to Close Settings, and two contradictory ⌘Qs is a lie.
-        Button("Quit \(appName)") { NSApp.terminate(nil) }
+        Button("退出 \(appName)") { NSApp.terminate(nil) }
     }
 }

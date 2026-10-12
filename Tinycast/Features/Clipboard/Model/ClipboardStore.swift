@@ -282,12 +282,14 @@ final class ClipboardStore {
     @ObservationIgnored private var deleteStaleStmt: OpaquePointer?
 
     /// `directory` defaults to the per-channel store; the harness passes a throwaway one.
-    init(directory: URL? = nil) {
+    init(directory: URL? = nil, openImmediately: Bool = true) {
         let base = directory ?? Self.defaultDirectory
         imagesDir = base.appendingPathComponent("images", isDirectory: true)
         dbURL = base.appendingPathComponent("clipboard.sqlite3")
-        try? FileManager.default.createDirectory(at: imagesDir, withIntermediateDirectories: true)
-        open()
+        if openImmediately {
+            try? FileManager.default.createDirectory(at: imagesDir, withIntermediateDirectories: true)
+            open()
+        }
     }
 
     /// Idempotent, so the coordinator can re-open the file when the feature is switched back on.

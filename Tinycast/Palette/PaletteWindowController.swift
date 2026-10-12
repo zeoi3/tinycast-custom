@@ -86,7 +86,7 @@ final class PaletteWindowController: NSObject, NSWindowDelegate {
             core.inputSourceSwitcher.beginSession(
                 preferredInputSourceID: core.settings.autoSwitchInputSourceID)
             // Events go stale while the palette is closed, and the countdown only ticks while up.
-            core.calendarCoordinator.paletteDidShow()
+            if core.settings.calendarEnabled { core.calendarCoordinator.paletteDidShow() }
             core.palette.noteVisible(true)
             core.clipboardStore.setTextSearchActive(true)
             // Only while we are on screen: a system-wide tap has no business outliving the window.
@@ -142,6 +142,7 @@ final class PaletteWindowController: NSObject, NSWindowDelegate {
 
     /// Read once here: ⌘V is a keystroke path, and both routes want the same answer.
     private func attachPastedFile() -> Bool {
+        guard core.settings.aiEnabled else { return false }
         let files = PasteboardFiles.urls(on: .general)
         switch core.palette.mode {
         case .ai: return core.quickAICoordinator.attachPastedFile(files: files)
@@ -154,8 +155,8 @@ final class PaletteWindowController: NSObject, NSWindowDelegate {
         panel?.orderOut(nil)
         commandEscapeTap.disable()
         core.inputSourceSwitcher.endSession()
-        core.calendarCoordinator.paletteDidHide()
-        core.roomCoordinator.paletteDidHide()
+        if core.settings.calendarEnabled { core.calendarCoordinator.paletteDidHide() }
+        if core.settings.windowManagementEnabled { core.roomCoordinator.paletteDidHide() }
         core.palette.noteVisible(false)
         core.clipboardStore.setTextSearchActive(false)
         // Drop the anchor, so the next summon re-resolves for the screen in use then.

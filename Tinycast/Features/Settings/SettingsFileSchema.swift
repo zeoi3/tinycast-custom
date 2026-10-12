@@ -8,12 +8,25 @@ enum SettingsFileSchema {
         shortcuts: HotKeySettingsFile, launcher: LauncherSettingsFile,
         windowManagement: WindowManagementSettingsFile
     ) -> [SettingsFileBinding] {
-        SettingsFileKey.allCases.map { key in
+        SettingsFileKey.allCases.filter { allowedKeys.contains($0) }.map { key in
             binding(
                 for: key, settings: settings, ai: ai, quickActions: quickActions,
                 shortcuts: shortcuts, launcher: launcher, windowManagement: windowManagement)
         }
     }
+
+    private static let allowedKeys: Set<SettingsFileKey> = [
+        .launcherShortcut, .showInMenuBar, .popToRootTimeout, .escapeKeyBehavior,
+        .autoSwitchInputSource, .appearance, .interfaceSize, .compactMode,
+        .showFavoritesInCompactMode, .openOnCursorScreen, .paletteDraggable,
+        .hyperKey, .hyperKeyIncludesShift, .hyperKeyQuickPress, .calcNumberStyle,
+        .launcherShowsSuggestions, .rootSearchSensitivity, .applicationsEnabled,
+        .searchScopes, .applications, .builtInCommandsEnabled, .builtInCommands,
+        .customCommandsEnabled, .customCommandsShowInLauncher,
+        .quicklinksEnabled, .quicklinksShowInLauncher, .quicklinkOpensNewWindow,
+        .quicklinkSelectionFallback, .quicklinkConfirmsBeforeDelete, .quicklinkCommands,
+        .appleShortcutsEnabled
+    ]
 
     private static func binding(
         for key: SettingsFileKey, settings: AppSettings, ai: AISettingsStore,

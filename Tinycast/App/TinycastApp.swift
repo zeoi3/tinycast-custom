@@ -16,11 +16,6 @@ struct TinycastApp: App {
         }
         .commands { menuBarCommands }
 
-        MenuBarExtra(isInserted: calendarMenuBarInsertion) {
-            CalendarMenuBarMenu()
-        } label: {
-            CalendarMenuBarLabel(appName: appName)
-        }
     }
 
     /// Read in `body` for Observation; SwiftUI echoes the binding back, so only a change writes.
@@ -64,17 +59,15 @@ struct TinycastApp: App {
     @CommandsBuilder
     private var menuBarCommands: some Commands {
         CommandGroup(replacing: .appInfo) {
-            Button("About \(appName)") { AppCore.shared.settingsCoordinator.showAbout() }
-            Button("Check for Updates…") { AppCore.shared.updateCoordinator.checkForUpdates() }
+            Button("关于 \(appName)") { AppCore.shared.settingsCoordinator.showAbout() }
         }
         CommandGroup(replacing: .appSettings) {
-            Button("Settings…") { AppCore.shared.settingsCoordinator.showSettings() }
+            Button(L10n.tr("Settings…")) { AppCore.shared.settingsCoordinator.showSettings() }
                 .keyboardShortcut(",")
         }
         CommandGroup(replacing: .appTermination) {
-            Button("Close Window") {
+            Button(L10n.tr("Close Window")) {
                 // The chat window closes itself when it is in front; otherwise ⌘Q is Settings'.
-                guard !AppCore.shared.aiChatCoordinator.closeWindowIfKey() else { return }
                 AppCore.shared.settingsCoordinator.closeSettings()
             }
             .keyboardShortcut("q")

@@ -315,7 +315,7 @@ final class TextInjector {
     var selection = ""
     var target: InjectionTarget?
     func captureExpansionContext(
-        target: InjectionTarget?, clipboardHistory: [String]
+        target: InjectionTarget?, clipboardHistory: [String], includeSelection: Bool = true
     ) -> SnippetTemplateEngine.ExpansionContext {
         self.target = target
         return .init(
@@ -376,6 +376,7 @@ final class PaletteCoordinator {
 enum Paster {
     static var copies: [String] = []
     static var succeeds = true
+    static func copyString(_ text: String) { copies.append(text) }
     static func copyPlainText(_ text: String) -> Bool {
         copies.append(text)
         return succeeds
@@ -406,7 +407,7 @@ final class AppCore {
         confirmations += 1
         return false
     }
-    func showMessage(_ message: String) { messages.append(message) }
+    func showMessage(_ message: String, tone: DialogTone = .success) { messages.append(message) }
 }
 
 enum BackupActions {

@@ -246,14 +246,10 @@ extension SettingsBackup {
 
         backup.customCommands = core.customCommands.commands
         backup.quicklinks = core.quicklinks.quicklinks
-        backup.windowLayouts = core.windowLayouts.layouts
-        backup.windowRooms = core.rooms.rooms
-        backup.customWindowSizes = core.customWindowSizes.sizes
         backup.favoriteApps = core.favorites.keys
         backup.hiddenLauncherItems = Array(core.visibility.hiddenItemKeys)
         backup.hiddenLauncherKinds = Array(core.visibility.disabledKinds)
         backup.launcherAliases = core.aliases.aliases
-        backup.pinnedEmoji = core.pinnedEmoji.glyphs
         return backup
     }
 
@@ -269,17 +265,7 @@ extension SettingsBackup {
             summary.quicklinks = core.quicklinkCoordinator.replaceQuicklinks(quicklinks)
         }
         // Before the hotkeys too, for the same reason: a binding needs its layout to attach to.
-        if let windowLayouts {
-            summary.windowLayouts =
-                core.windowLayoutCoordinator.replaceWindowLayouts(windowLayouts)
-        }
-        if let windowRooms {
-            summary.windowRooms = core.roomCoordinator.replaceRooms(windowRooms)
-        }
-        if let customWindowSizes {
-            summary.customWindowSizes =
-                core.customWindowSizeCoordinator.replaceCustomWindowSizes(customWindowSizes)
-        }
+
         if let hotkeys { summary.hotkeys = applyHotkeys(hotkeys, to: core) }
         if let favoriteApps {
             core.favorites.replace(keys: favoriteApps)
@@ -296,10 +282,7 @@ extension SettingsBackup {
             // Counted after the store, which drops blanks the file may carry.
             summary.aliases = core.aliases.aliases.count
         }
-        if let pinnedEmoji {
-            core.pinnedEmoji.replace(pinnedEmoji)
-            summary.pinnedEmoji = core.pinnedEmoji.glyphs.count
-        }
+
         return summary
     }
 
@@ -563,6 +546,7 @@ extension SettingsBackup {
         var count = 0
         // Skip an already-claimed binding: the second registration would silently fail.
         func apply(_ binding: HotKeyBinding, _ action: HotKeyAction) {
+            guard ProductProfile.allowsHotKey(action.defaultsKey) else { return }
             guard hk.conflictOwner(of: binding, excluding: action) == nil else { return }
             hk.setBinding(binding, for: action)
             count += 1
@@ -592,20 +576,7 @@ extension SettingsBackup {
             guard let id = WindowCommand.ID(rawValue: rawID) else { continue }
             apply(b, .windowCommand(id: id))
         }
-        for (rawID, b) in hotkeys.windowLayouts ?? [:] {
-            guard let id = UUID(uuidString: rawID), core.windowLayouts.layout(id: id) != nil
-            else { continue }
-            apply(b, .windowLayout(id: id))
-        }
-        for (rawID, b) in hotkeys.windowRooms ?? [:] {
-            guard let id = UUID(uuidString: rawID), core.rooms.room(id: id) != nil else { continue }
-            apply(b, .windowRoom(id: id))
-        }
-        for (rawID, b) in hotkeys.customWindowSizes ?? [:] {
-            guard let id = UUID(uuidString: rawID), core.customWindowSizes.size(id: id) != nil
-            else { continue }
-            apply(b, .customWindowSize(id: id))
-        }
+
         for (rawID, b) in hotkeys.quicklinks ?? [:] {
             guard let id = UUID(uuidString: rawID), core.quicklinks.quicklink(id: id) != nil else {
                 continue

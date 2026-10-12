@@ -181,6 +181,7 @@ final class HotKeyManager {
 
     /// Persists or clears the binding and swaps live registration.
     func setBinding(_ binding: HotKeyBinding?, for action: HotKeyAction) {
+        guard binding == nil || ProductProfile.allowsHotKey(action.defaultsKey) else { return }
         if action == .dictation, binding != self.binding(for: action) { onDictationCancelled?() }
         let previous = bindings[action]
         if let binding,
@@ -276,6 +277,7 @@ final class HotKeyManager {
         actions += boundExtensionCommandEntryIDs.map { .extensionCommand(entryID: $0) }
         actions += SystemAction.ID.allCases.map { .systemAction(id: $0) }
         actions += WindowCommand.ID.allCases.map { .windowCommand(id: $0) }
+        actions = actions.filter { ProductProfile.allowsHotKey($0.defaultsKey) }
         candidateActionsCache = actions
         return actions
     }
@@ -283,7 +285,7 @@ final class HotKeyManager {
     private func displayName(of action: HotKeyAction) -> String {
         switch action {
         case .togglePalette:
-            return "App Launcher"
+            return L10n.tr("App Launcher")
         case .dictation:
             return "Dictation"
         case .command(let id):
@@ -317,6 +319,7 @@ final class HotKeyManager {
 
     /// Hands a combo to Carbon; a modifier-only binding has no per-action registration.
     private func register(_ action: HotKeyAction) {
+        guard ProductProfile.allowsHotKey(action.defaultsKey) else { return }
         guard let shortcut = binding(for: action)?.shortcut else { return }
         center.register(
             id: action.defaultsKey, shortcut: shortcut,

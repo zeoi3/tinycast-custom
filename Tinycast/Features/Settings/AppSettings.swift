@@ -12,7 +12,7 @@ enum PopToRootTimeout: Int, CaseIterable, Identifiable, Sendable {
     var id: Int { rawValue }
 
     var title: String {
-        self == .immediately ? "Immediately" : "After \(rawValue) seconds"
+        self == .immediately ? L10n.tr("Immediately") : L10n.format("After %d seconds", rawValue)
     }
 
     var interval: TimeInterval { TimeInterval(rawValue) }
@@ -131,11 +131,25 @@ final class AppSettings {
 
     /// Ships on, unlike every other feature switch: a launcher is expected to keep history.
     var clipboardEnabled: Bool {
-        didSet { defaults.set(clipboardEnabled, forKey: Key.clipboardEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("clipboard") && defaults.bool(forKey: Key.clipboardEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("clipboard") && newValue, forKey: Key.clipboardEnabled.rawValue)
+        }
     }
 
     var clipboardTextSearchEnabled: Bool {
-        didSet { defaults.set(clipboardTextSearchEnabled, forKey: Key.clipboardTextSearchEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("clipboardTextSearch")
+                && defaults.bool(forKey: Key.clipboardTextSearchEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("clipboardTextSearch") && newValue,
+                forKey: Key.clipboardTextSearchEnabled.rawValue)
+        }
     }
 
     var clipboardRetention: ClipboardRetention {
@@ -167,9 +181,14 @@ final class AppSettings {
     }
 
     var automaticallyCheckForUpdates: Bool {
-        didSet {
+        get {
+            ProductProfile.allowsFeature("automaticallyCheckForUpdates")
+                && defaults.bool(forKey: Key.automaticallyCheckForUpdates.rawValue)
+        }
+        set {
             defaults.set(
-                automaticallyCheckForUpdates, forKey: Key.automaticallyCheckForUpdates.rawValue)
+                ProductProfile.allowsFeature("automaticallyCheckForUpdates") && newValue,
+                forKey: Key.automaticallyCheckForUpdates.rawValue)
         }
     }
 
@@ -298,7 +317,15 @@ final class AppSettings {
 
     // Feature switches, off out of the box, and off means fully off.
     var fileSearchEnabled: Bool {
-        didSet { defaults.set(fileSearchEnabled, forKey: Key.fileSearchEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("fileSearch")
+                && defaults.bool(forKey: Key.fileSearchEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("fileSearch") && newValue, forKey: Key.fileSearchEnabled.rawValue
+            )
+        }
     }
 
     /// Tilde-abbreviated, so a backup taken on one machine still points somewhere on another.
@@ -314,11 +341,20 @@ final class AppSettings {
     }
 
     var notesEnabled: Bool {
-        didSet { defaults.set(notesEnabled, forKey: Key.notesEnabled.rawValue) }
+        get { ProductProfile.allowsFeature("notes") && defaults.bool(forKey: Key.notesEnabled.rawValue) }
+        set {
+            defaults.set(ProductProfile.allowsFeature("notes") && newValue, forKey: Key.notesEnabled.rawValue)
+        }
     }
 
     var dictationEnabled: Bool {
-        didSet { defaults.set(dictationEnabled, forKey: Key.dictationEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("dictation") && defaults.bool(forKey: Key.dictationEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("dictation") && newValue, forKey: Key.dictationEnabled.rawValue)
+        }
     }
 
     var dictationMode: DictationMode {
@@ -367,10 +403,12 @@ final class AppSettings {
 
     /// Off by default: connecting a server is consent to run code Tinycast did not write.
     var mcpEnabled: Bool {
-        didSet { defaults.set(mcpEnabled, forKey: Key.mcpEnabled.rawValue) }
+        get { ProductProfile.allowsFeature("mcp") && defaults.bool(forKey: Key.mcpEnabled.rawValue) }
+        set { defaults.set(ProductProfile.allowsFeature("mcp") && newValue, forKey: Key.mcpEnabled.rawValue) }
     }
     var aiEnabled: Bool {
-        didSet { defaults.set(aiEnabled, forKey: Key.aiEnabled.rawValue) }
+        get { ProductProfile.allowsFeature("ai") && defaults.bool(forKey: Key.aiEnabled.rawValue) }
+        set { defaults.set(ProductProfile.allowsFeature("ai") && newValue, forKey: Key.aiEnabled.rawValue) }
     }
 
     var customCommandsEnabled: Bool {
@@ -387,12 +425,26 @@ final class AppSettings {
 
     /// Also keyword-expansion consent, so it confirms first and never rides a backup.
     var snippetsEnabled: Bool {
-        didSet { defaults.set(snippetsEnabled, forKey: Key.snippetsEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("snippets") && defaults.bool(forKey: Key.snippetsEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("snippets") && newValue, forKey: Key.snippetsEnabled.rawValue)
+        }
     }
 
     /// Off out of the box: on means Tinycast may read a selection anywhere and type over it.
     var quickActionsEnabled: Bool {
-        didSet { defaults.set(quickActionsEnabled, forKey: Key.quickActionsEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("quickActions")
+                && defaults.bool(forKey: Key.quickActionsEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("quickActions") && newValue,
+                forKey: Key.quickActionsEnabled.rawValue)
+        }
     }
 
     var snippetsShowInLauncher: Bool {
@@ -405,7 +457,15 @@ final class AppSettings {
     }
 
     var navigationEnabled: Bool {
-        didSet { defaults.set(navigationEnabled, forKey: Key.navigationEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("navigation")
+                && defaults.bool(forKey: Key.navigationEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("navigation") && newValue, forKey: Key.navigationEnabled.rawValue
+            )
+        }
     }
 
     /// Bundle IDs whose menu bar Search Menu Bar Items refuses to read at all.
@@ -422,7 +482,15 @@ final class AppSettings {
 
     /// Consent to run third-party JavaScript: it confirms, defaults off, rides no backup.
     var extensionsEnabled: Bool {
-        didSet { defaults.set(extensionsEnabled, forKey: Key.extensionsEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("extensions")
+                && defaults.bool(forKey: Key.extensionsEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("extensions") && newValue, forKey: Key.extensionsEnabled.rawValue
+            )
+        }
     }
 
     var extensionsShowInLauncher: Bool {
@@ -449,7 +517,13 @@ final class AppSettings {
 
     /// Doubles as calendar-access consent, so only `CalendarCoordinator` may write it.
     var calendarEnabled: Bool {
-        didSet { defaults.set(calendarEnabled, forKey: Key.calendarEnabled.rawValue) }
+        get {
+            ProductProfile.allowsFeature("calendar") && defaults.bool(forKey: Key.calendarEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("calendar") && newValue, forKey: Key.calendarEnabled.rawValue)
+        }
     }
 
     var calendarShowInLauncher: Bool {
@@ -475,7 +549,15 @@ final class AppSettings {
 
     /// Arms the app to open meeting links unattended, so only the Calendar pane's switch writes it.
     var autoJoinMeetings: Bool {
-        didSet { defaults.set(autoJoinMeetings, forKey: Key.autoJoinMeetings.rawValue) }
+        get {
+            ProductProfile.allowsFeature("autoJoinMeetings")
+                && defaults.bool(forKey: Key.autoJoinMeetings.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("autoJoinMeetings") && newValue,
+                forKey: Key.autoJoinMeetings.rawValue)
+        }
     }
 
     var autoJoinConfirms: Bool {
@@ -491,7 +573,13 @@ final class AppSettings {
 
     /// Doubles as camera consent, so only the Calendar pane's switch writes it.
     var cameraPreview: Bool {
-        didSet { defaults.set(cameraPreview, forKey: Key.cameraPreview.rawValue) }
+        get {
+            ProductProfile.allowsFeature("cameraPreview") && defaults.bool(forKey: Key.cameraPreview.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("cameraPreview") && newValue, forKey: Key.cameraPreview.rawValue)
+        }
     }
 
     /// Nil opens meeting links in the default browser.
@@ -510,10 +598,8 @@ final class AppSettings {
     }
 
     var calendarMenuBarDisplay: CalendarMenuBarDisplay {
-        didSet {
-            defaults.set(
-                calendarMenuBarDisplay.rawValue, forKey: Key.calendarMenuBarDisplay.rawValue)
-        }
+        get { .disabled }
+        set { _ = newValue }
     }
 
     var menuBarLinkedEventsOnly: Bool {
@@ -536,8 +622,14 @@ final class AppSettings {
 
     /// Off means fully off: no launcher entries, and a still-registered shortcut moves nothing.
     var windowManagementEnabled: Bool {
-        didSet {
-            defaults.set(windowManagementEnabled, forKey: Key.windowManagementEnabled.rawValue)
+        get {
+            ProductProfile.allowsFeature("windowManagement")
+                && defaults.bool(forKey: Key.windowManagementEnabled.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("windowManagement") && newValue,
+                forKey: Key.windowManagementEnabled.rawValue)
         }
     }
 
@@ -614,7 +706,15 @@ final class AppSettings {
 
     /// Whether the support window may reopen itself; off means never ask again.
     var supportRemindersEnabled: Bool {
-        didSet { defaults.set(supportRemindersEnabled, forKey: Key.supportReminders.rawValue) }
+        get {
+            ProductProfile.allowsFeature("supportReminders")
+                && defaults.bool(forKey: Key.supportReminders.rawValue)
+        }
+        set {
+            defaults.set(
+                ProductProfile.allowsFeature("supportReminders") && newValue,
+                forKey: Key.supportReminders.rawValue)
+        }
     }
 
     /// Whether settings.json mirrors these settings; `AppCore` starts and stops the mirror.
@@ -624,11 +724,7 @@ final class AppSettings {
 
     init() {
         // The only feature switch that defaults on, so absence has to outrank a stored `false`.
-        clipboardEnabled =
-            defaults.object(forKey: Key.clipboardEnabled.rawValue) == nil
-            || defaults.bool(forKey: Key.clipboardEnabled.rawValue)
         // `integer(forKey:)` returns 0 when unset, which no case matches.
-        clipboardTextSearchEnabled = defaults.bool(forKey: Key.clipboardTextSearchEnabled.rawValue)
         clipboardRetention =
             ClipboardRetention(rawValue: defaults.integer(forKey: Key.clipboardRetention.rawValue))
             ?? .threeMonths
@@ -643,9 +739,6 @@ final class AppSettings {
         showInMenuBar =
             defaults.object(forKey: Key.showInMenuBar.rawValue) == nil
             || defaults.bool(forKey: Key.showInMenuBar.rawValue)
-        automaticallyCheckForUpdates =
-            defaults.object(forKey: Key.automaticallyCheckForUpdates.rawValue) == nil
-            || defaults.bool(forKey: Key.automaticallyCheckForUpdates.rawValue)
         hyperKey =
             defaults.string(forKey: Key.hyperKey.rawValue).flatMap(HyperKeyPhysicalKey.init)
             ?? .none
@@ -700,15 +793,12 @@ final class AppSettings {
             as? [String: [Double]] ?? [:]
         paletteExpandedCenterDisplays =
             Set(defaults.stringArray(forKey: Key.paletteExpandedCenterDisplays.rawValue) ?? [])
-        fileSearchEnabled = defaults.bool(forKey: Key.fileSearchEnabled.rawValue)
         // Unset seeds home; a stored empty array is a cleared list that searches nothing.
         fileSearchScopes =
             defaults.stringArray(forKey: Key.fileSearchScopes.rawValue)
             ?? FileSearchScope.defaultScopes
         fileSearchIgnorePatterns =
             defaults.stringArray(forKey: Key.fileSearchIgnorePatterns.rawValue) ?? []
-        notesEnabled = defaults.bool(forKey: Key.notesEnabled.rawValue)
-        dictationEnabled = defaults.bool(forKey: Key.dictationEnabled.rawValue)
         dictationMode =
             defaults.string(forKey: Key.dictationMode.rawValue)
             .flatMap(DictationMode.init) ?? .toggle
@@ -736,21 +826,18 @@ final class AppSettings {
             defaults.object(forKey: Key.notesShowsFormattingBar.rawValue) == nil
             || defaults.bool(forKey: Key.notesShowsFormattingBar.rawValue)
         notesFolder = defaults.string(forKey: Key.notesFolder.rawValue)
-        aiEnabled = defaults.bool(forKey: Key.aiEnabled.rawValue)
-        mcpEnabled = defaults.bool(forKey: Key.mcpEnabled.rawValue)
-        customCommandsEnabled = defaults.bool(forKey: Key.customCommandsEnabled.rawValue)
+        customCommandsEnabled =
+            defaults.object(forKey: Key.customCommandsEnabled.rawValue) == nil
+            || defaults.bool(forKey: Key.customCommandsEnabled.rawValue)
         // These default on, so absence must be distinguished from a stored `false`.
         customCommandsShowInLauncher =
             defaults.object(forKey: Key.customCommandsShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.customCommandsShowInLauncher.rawValue)
-        snippetsEnabled = defaults.bool(forKey: Key.snippetsEnabled.rawValue)
-        quickActionsEnabled = defaults.bool(forKey: Key.quickActionsEnabled.rawValue)
         snippetsShowInLauncher =
             defaults.object(forKey: Key.snippetsShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.snippetsShowInLauncher.rawValue)
         snippetsFolder = defaults.string(forKey: Key.snippetsFolder.rawValue)
         // Opt-in, unlike its siblings: until it is asked for, nothing about extensions is loaded.
-        extensionsEnabled = defaults.bool(forKey: Key.extensionsEnabled.rawValue)
         extensionsShowInLauncher =
             defaults.object(forKey: Key.extensionsShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.extensionsShowInLauncher.rawValue)
@@ -760,7 +847,6 @@ final class AppSettings {
         extensionCustomSearchPaths =
             defaults.stringArray(forKey: Key.extensionCustomSearchPaths.rawValue) ?? []
         // Opt-in, like extensions: until it is asked for, EventKit is never loaded.
-        calendarEnabled = defaults.bool(forKey: Key.calendarEnabled.rawValue)
         calendarShowInLauncher =
             defaults.object(forKey: Key.calendarShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.calendarShowInLauncher.rawValue)
@@ -774,20 +860,14 @@ final class AppSettings {
             ?? .todayAndTomorrow
         joinWindowMinutes =
             JoinWindow(rawValue: defaults.integer(forKey: Key.joinWindowMinutes.rawValue)) ?? .five
-        autoJoinMeetings = defaults.bool(forKey: Key.autoJoinMeetings.rawValue)
         autoJoinConfirms =
             defaults.object(forKey: Key.autoJoinConfirms.rawValue) == nil
             || defaults.bool(forKey: Key.autoJoinConfirms.rawValue)
         autoJoinNamedProvidersOnly = defaults.bool(forKey: Key.autoJoinNamedProvidersOnly.rawValue)
-        cameraPreview = defaults.bool(forKey: Key.cameraPreview.rawValue)
         meetingBrowserBundleID = defaults.string(forKey: Key.meetingBrowser.rawValue)
         // Both default to their zero case, so an unset key needs no presence check.
         menuBarEvents =
             MenuBarEvents(rawValue: defaults.integer(forKey: Key.menuBarEvents.rawValue)) ?? .today
-        calendarMenuBarDisplay =
-            CalendarMenuBarDisplay(
-                rawValue: defaults.integer(forKey: Key.calendarMenuBarDisplay.rawValue))
-            ?? .disabled
         menuBarLinkedEventsOnly =
             defaults.object(forKey: Key.menuBarLinkedEventsOnly.rawValue) == nil
             || defaults.bool(forKey: Key.menuBarLinkedEventsOnly.rawValue)
@@ -797,11 +877,9 @@ final class AppSettings {
             defaults.object(forKey: Key.hideCurrentEvent.rawValue)
             .flatMap { $0 as? Int }
             .flatMap(HideCurrentEvent.init(rawValue:)) ?? .dontHide
-        navigationEnabled = defaults.bool(forKey: Key.navigationEnabled.rawValue)
         menuSearchDisabledApps =
             defaults.stringArray(forKey: Key.menuSearchDisabledApps.rawValue) ?? []
         menuSearchShowsAppleMenu = defaults.bool(forKey: Key.menuSearchShowsAppleMenu.rawValue)
-        windowManagementEnabled = defaults.bool(forKey: Key.windowManagementEnabled.rawValue)
         windowManagementShowInLauncher =
             defaults.object(forKey: Key.windowManagementShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.windowManagementShowInLauncher.rawValue)
@@ -815,11 +893,15 @@ final class AppSettings {
         windowRoomsShowInLauncher =
             defaults.object(forKey: Key.windowRoomsShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.windowRoomsShowInLauncher.rawValue)
-        quicklinksEnabled = defaults.bool(forKey: Key.quicklinksEnabled.rawValue)
+        quicklinksEnabled =
+            defaults.object(forKey: Key.quicklinksEnabled.rawValue) == nil
+            || defaults.bool(forKey: Key.quicklinksEnabled.rawValue)
         quicklinksShowInLauncher =
             defaults.object(forKey: Key.quicklinksShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.quicklinksShowInLauncher.rawValue)
-        appleShortcutsEnabled = defaults.bool(forKey: Key.appleShortcutsEnabled.rawValue)
+        appleShortcutsEnabled =
+            defaults.object(forKey: Key.appleShortcutsEnabled.rawValue) == nil
+            || defaults.bool(forKey: Key.appleShortcutsEnabled.rawValue)
         quicklinkOpensNewWindow = defaults.bool(forKey: Key.quicklinkOpensNewWindow.rawValue)
         quicklinkSelectionFallback =
             defaults.string(forKey: Key.quicklinkSelectionFallback.rawValue)
@@ -827,9 +909,6 @@ final class AppSettings {
         quicklinkConfirmsBeforeDelete =
             defaults.object(forKey: Key.quicklinkConfirmsBeforeDelete.rawValue) == nil
             || defaults.bool(forKey: Key.quicklinkConfirmsBeforeDelete.rawValue)
-        supportRemindersEnabled =
-            defaults.object(forKey: Key.supportReminders.rawValue) == nil
-            || defaults.bool(forKey: Key.supportReminders.rawValue)
         settingsFileEnabled = defaults.bool(forKey: Key.settingsFileEnabled.rawValue)
     }
 }

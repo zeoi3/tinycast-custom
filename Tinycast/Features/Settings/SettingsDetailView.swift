@@ -7,7 +7,7 @@ struct SettingsDetailView: View {
     var body: some View {
         // Not a `TabView`: `NSTabView` re-hosts on selection and breaks the recorder.
         Group {
-            switch navigation.tab {
+            switch ProductProfile.settingsTabs.contains(navigation.tab.rawValue) ? navigation.tab : .general {
             case .general: GeneralSettingsView()
             case .applications: ApplicationsSettingsView()
             case .systemSettings: SystemSettingsSettingsView()
@@ -16,7 +16,7 @@ struct SettingsDetailView: View {
             case .quicklinks: QuicklinksSettingsView()
             case .appleShortcuts: AppleShortcutsSettingsView()
             case .fallbacks: FallbacksSettingsView()
-            case .ai: AISettingsView()
+            case .ai: WebAISettingsView()
             case .quickActions: QuickActionsSettingsView()
             case .dictation: DictationSettingsView()
             case .fileSearch: FileSearchSettingsView()

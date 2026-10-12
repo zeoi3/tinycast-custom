@@ -14,13 +14,14 @@ final class SettingsCoordinator {
     init(core: AppCore) {
         self.core = core
         window = AppWindowController(
-            title: "Settings", contentSize: Theme.Size.settingsWindow, resizable: true,
+            title: L10n.tr("Settings"), contentSize: Theme.Size.settingsWindow, resizable: true,
             autosaveName: "SettingsWindow", activation: core.activationPolicy)
     }
 
     /// A fresh window mounts on `tab`; an open one navigates to it, recording the jump in history.
     /// A nil `tab` only reveals the window, so re-opening a minimised one keeps the pane it was on.
     func showSettings(tab: SettingsTab? = nil, revealing target: SettingsTarget? = nil) {
+        if let tab, !ProductProfile.settingsTabs.contains(tab.rawValue) { return }
         if window.focus() {
             if let tab { navigation?.select(tab, revealing: target) }
             return

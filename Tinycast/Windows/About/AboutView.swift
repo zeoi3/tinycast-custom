@@ -34,7 +34,6 @@ struct AboutView: View {
                 }
                 .settingsAnchor(.aboutAbout)
                 links
-                support
             }
             .formStyle(.grouped)
             .settingsScrollTarget(.about)
@@ -67,16 +66,11 @@ struct AboutView: View {
                     .overlay(
                         Capsule().strokeBorder(Theme.Colors.cardStroke, lineWidth: 1)
                     )
-                Button {
-                    core.updateCoordinator.checkForUpdates()
-                } label: {
-                    SettingsRowTitle(.aboutAbout, "Check for Updates")
-                }
-                .buttonStyle(.link)
-                .font(.caption)
+                Text("基于 Tinycast v0.11.19 · 手动安装更新")
+                    .font(.caption)
             }
 
-            Text("A tiny, native macOS launcher.")
+            Text(L10n.tr("A tiny, native macOS launcher."))
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
@@ -144,23 +138,13 @@ private struct AboutLink: Identifiable {
 
     static let all: [AboutLink] = [
         AboutLink(
-            id: "website", glyph: .symbol("globe"), title: "Website",
-            detail: "tinycast.dev",
-            url: URL(string: "https://tinycast.dev/")!),
+            id: "custom", glyph: .brand("BrandGitHub"), title: "定制版源代码与反馈",
+            detail: "github.com/zeoi3/tinycast-custom",
+            url: URL(string: "https://github.com/zeoi3/tinycast-custom")!),
         AboutLink(
-            id: "github", glyph: .brand("BrandGitHub"), title: "GitHub",
+            id: "upstream", glyph: .brand("BrandGitHub"), title: "上游 Tinycast · 开源致谢",
             detail: "github.com/abue-ammar/tinycast",
-            url: URL(string: "https://github.com/abue-ammar/tinycast")!),
-        AboutLink(
-            id: "discord", glyph: .brand("BrandDiscord"), title: "Discord",
-            detail: "Join the Tinycast community",
-            url: URL(string: "https://discord.gg/v2Eeb4QQy3")!),
-        AboutLink(
-            id: "x", glyph: .brand("BrandX"), title: "X", detail: "@abue_ammar",
-            url: URL(string: "https://x.com/abue_ammar")!),
-        AboutLink(
-            id: "email", glyph: .symbol("envelope"), title: "Email",
-            detail: "iabueammar@gmail.com", url: URL(string: "mailto:iabueammar@gmail.com")!)
+            url: URL(string: "https://github.com/abue-ammar/tinycast")!)
     ]
 }
 

@@ -75,6 +75,7 @@ final class PaletteCoordinator {
 
     /// Navigating keeps the screen under as the back step; the launcher is the root and never has one.
     func navigate(to mode: PaletteMode) {
+        guard ProductProfile.paletteModes.contains(mode.rawValue) else { return }
         if windowController.isVisible, palette.mode != mode, mode != .launcher {
             palette.push(mode: mode)
         } else {
@@ -86,6 +87,8 @@ final class PaletteCoordinator {
     func showPalette(
         mode: PaletteMode, restoreAnyMode: Bool = false, seeding query: String? = nil
     ) {
+        guard ProductProfile.paletteModes.contains(mode.rawValue) else { return }
+        if !ProductProfile.paletteModes.contains(palette.mode.rawValue) { palette.prepare(mode: .launcher) }
         let preserved = windowController.consumePreservedState()
         let restoring = preserved && (restoreAnyMode || palette.mode == mode)
         // Resetting a screen the pop to root already reset would only re-render the whole palette.

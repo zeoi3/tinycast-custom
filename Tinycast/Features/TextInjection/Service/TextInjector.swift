@@ -195,11 +195,11 @@ final class TextInjector {
 
     func captureExpansionContext(
         target: InjectionTarget?,
-        clipboardHistory: [String]
+        clipboardHistory: [String], includeSelection: Bool = true
     ) -> SnippetTemplateEngine.ExpansionContext {
         SnippetTemplateEngine.ExpansionContext(
             clipboardHistory: clipboardHistory,
-            selection: selection(in: target),
+            selection: includeSelection ? selection(in: target) : "",
             now: Date(),
             calendar: Calendar.current,
             locale: Locale.current,

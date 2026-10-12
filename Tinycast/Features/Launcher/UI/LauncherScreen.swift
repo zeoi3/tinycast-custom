@@ -76,7 +76,7 @@ struct LauncherScreen: PaletteScreen {
             pinned == nil
             ? CalcMemo.evaluate(vm.query, rates: currencyRates.rates, format: core.calcNumberFormat) : nil
         // After the calculator: `#FF5733` is never arithmetic, so the two can't both answer.
-        let color = calc == nil && pinned == nil ? ColorValue.parse(vm.query) : nil
+        let color: ColorValue? = nil
         let fallbacks = core.fallbackCoordinator.entries(for: vm.query)
         let entries = results.map(Row.entry) + fallbacks.map { Row.fallback($0.fallback, $0.entry) }
         let pinsFavorites = vm.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -137,7 +137,7 @@ struct LauncherScreen: PaletteScreen {
             return meeting.link == nil ? "Open in Calendar" : "Join Meeting"
         case .entry(let app): return app.kind.descriptor.openVerb
         case .fallback(let fallback, _): return fallback.openVerb
-        case nil: return "Open Application"
+        case nil: return L10n.tr("Open Application")
         }
     }
 

@@ -37,10 +37,24 @@ for (const m of anchorSource.matchAll(
   anchorTitles.set(m[1], m[2]);
 }
 
+const profile = fs.readFileSync(path.join(ROOT, "Tinycast/Platform/ProductProfile.swift"), "utf8");
+function profileSet(name) {
+  const body = profile.split(`static let ${name}: Set<String> = [`)[1]?.split("]")[0] ?? "";
+  return new Set([...body.matchAll(/"([^"]+)"/g)].map(m => m[1]));
+}
+const tabs = profileSet("settingsTabs");
+const excludedRows = profileSet("excludedSettingsRows");
+const activeAnchors = new Set();
+for (const m of anchorSource.matchAll(/static let (\w+) = Self\(\s*tab: \.(\w+), title:/g)) {
+  if (tabs.has(m[2]) && (m[2] !== "ai") &&
+      (m[2] !== "permissions" || m[1] === "permissionsAccessibility")) activeAnchors.add(m[1]);
+}
+if (!tabs.has("general")) throw new Error("Product profile could not be read");
 const problems = [];
 
 // 1. Every anchor is claimed by a section.
 for (const anchor of anchorTitles.keys()) {
+  if (!activeAnchors.has(anchor)) continue;
   const claimed =
     source.includes(`SettingsSectionHeader(.${anchor})`) ||
     source.includes(`SettingsSectionHeader(anchor: .${anchor})`) ||
@@ -52,6 +66,7 @@ for (const anchor of anchorTitles.keys()) {
 // 2. Every row entry is marked on a row.
 for (const m of catalog.matchAll(/\.init\(\s*\.(\w+),\s*"((?:[^"\\]|\\.)*)"/g)) {
   const [, anchor, title] = m;
+  if (!activeAnchors.has(anchor) || excludedRows.has(title)) continue;
   const quoted = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const marked =
     source.includes(`SettingsRowTitle(.${anchor}, "${title}")`) ||

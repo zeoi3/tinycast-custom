@@ -87,7 +87,12 @@ final class QuicklinkCoordinator {
         let encoding: SnippetTemplateEngine.ValueEncoding =
             QuicklinkDestination.usesURLEncoding(quicklink.link) ? .percentEncoding : .none
         var context = injector.captureExpansionContext(
-            target: target, clipboardHistory: clipboardHistory())
+            target: target,
+            clipboardHistory: SnippetTemplateEngine.usesClipboard(quicklink.link)
+                || (SnippetTemplateEngine.usesSelection(quicklink.link)
+                    && settings.quicklinkSelectionFallback == .clipboard)
+                ? clipboardHistory() : [],
+            includeSelection: SnippetTemplateEngine.usesSelection(quicklink.link))
         var needsSelection = false
 
         // An unreadable selection is missing, not empty: substitute the clipboard, or take the field.
@@ -156,6 +161,19 @@ final class QuicklinkCoordinator {
         _ quicklink: Quicklink, link: String, forcingDefaultApp: Bool
     ) {
         if windowController.isVisible { paletteCoordinator.hidePalette(restoreFocus: false) }
+        if link.hasPrefix("tinycast-custom://web-ai") {
+            guard let request = WebAI.request(link) else {
+                core.showMessage("网页 AI 链接无效，请检查网站地址和问题。", tone: .danger)
+                return
+            }
+            guard NSWorkspace.shared.open(request.site) else {
+                core.showMessage("无法打开 AI 网站，请检查默认浏览器。", tone: .danger)
+                return
+            }
+            Paster.copyString(request.prompt)
+            core.showMessage("问题已复制，请在网页中粘贴发送")
+            return
+        }
         let openWith = forcingDefaultApp ? nil : quicklink.openWithBundleID
         Task {
             do throws(QuicklinkLauncher.Failure) {

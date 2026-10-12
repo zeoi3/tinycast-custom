@@ -10,19 +10,19 @@ struct RootPaletteView: View {
     @Environment(CalculatorHistoryStore.self) private var calcHistory
     /// Observed so the card re-evaluates when a snapshot lands or consent changes.
     @Environment(CurrencyRateStore.self) private var currencyRates
-    @Environment(EmojiIndex.self) private var emojiIndex
-    @Environment(FrequentEmojiStore.self) private var frequentEmoji
+    private var emojiIndex: EmojiIndex { core.emojiIndex }
+    private var frequentEmoji: FrequentEmojiStore { core.frequentEmoji }
     @Environment(FileSearchSession.self) private var fileSearch
     @Environment(DictionarySession.self) private var dictionary
     @Environment(MenuSearchSession.self) private var menuSearch
     @Environment(WindowSwitchSession.self) private var windowSwitch
-    @Environment(CalendarStore.self) private var calendarStore
+    private var calendarStore: CalendarStore { core.calendarStore }
     /// Observed so the join card's countdown redraws on the minute boundary.
-    @Environment(MeetingClock.self) private var meetingClock
+    private var meetingClock: MeetingClock { core.meetingClock }
     @Environment(UninstallSession.self) private var uninstall
     @Environment(QuicklinkStore.self) private var quicklinks
-    @Environment(SnippetsStore.self) private var snippets
-    @Environment(ExtensionManager.self) private var extensions
+    private var snippets: SnippetsStore { core.snippetsStore }
+    private var extensions: ExtensionManager { core.extensions }
     @Environment(AppSettings.self) private var settings
     @Environment(\.metrics) private var metrics
     @Environment(\.openURL) private var openURL
@@ -54,7 +54,7 @@ struct RootPaletteView: View {
             return LauncherScreen(
                 appIndex: appIndex, favorites: favorites, visibility: visibility,
                 currencyRates: currencyRates, core: core, vm: vm, running: selectionIsRunning,
-                meeting: core.calendarCoordinator.cardedMeeting, now: meetingClock.now,
+                meeting: nil, now: Date(),
                 openActions: openActions, openArgumentOptions: openArgumentOptions,
                 scrollToFollow: { scroll = ScrollIntent(kind: .follow) })
         case .uninstall:
@@ -212,25 +212,14 @@ struct RootPaletteView: View {
         return PopoverMenuContent(
             header: title,
             items: [
-                PopoverMenuItem(
-                    title: "Changelog",
-                    systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90"
-                ) {
-                    if let url = URL(string: "https://github.com/abue-ammar/tinycast/releases") {
-                        openURL(url)
-                    }
-                },
-                PopoverMenuItem(title: "About Tinycast", systemImage: "info.circle") {
+                PopoverMenuItem(title: "关于 Tinycast Custom", systemImage: "info.circle") {
                     core.settingsCoordinator.showAbout()
-                },
-                PopoverMenuItem(title: "Support Tinycast", systemImage: "heart") {
-                    core.supportCoordinator.showSupport()
                 },
                 PopoverMenuItem(title: "Settings", systemImage: "gearshape", shortcut: "⌘,") {
                     core.settingsCoordinator.showSettings()
                 },
                 PopoverMenuItem(
-                    title: "Quit \(appName)", systemImage: "rectangle.portrait.and.arrow.right",
+                    title: "退出 \(appName)", systemImage: "rectangle.portrait.and.arrow.right",
                     isDestructive: true
                 ) {
                     NSApp.terminate(nil)
@@ -387,7 +376,7 @@ struct RootPaletteView: View {
     /// Split from `body` for the same reason `keyHandlers` is: one chain cannot carry them all.
     @ViewBuilder
     private func stateObservers(_ content: some View) -> some View {
-        emojiObservers(content)
+        content
             // Every show bumps focusToken so the search field refocuses.
             .onChange(of: vm.focusToken) {
                 searchFocused = !screen.hidesSearchField
@@ -411,7 +400,6 @@ struct RootPaletteView: View {
                 guard previous == nil, let handler, !vm.query.isEmpty else { return }
                 extensions.dispatch(handler: handler, arguments: [vm.query])
             }
-            .modifier(ExtensionSelectionForwarder(screen: extensionScreen, selection: vm.selection))
             // A narrower list means the old index points at a different row, or at none.
             .onChange(of: vm.clipboardFilter) { land() }
             // The filter is part of the query, so narrowing re-runs it rather than thinning rows.
@@ -443,10 +431,12 @@ struct RootPaletteView: View {
                 }
                 if vm.mode != .menuSearch { menuSearch.reset() }
                 if vm.mode != .switchWindows { windowSwitch.reset() }
-                if vm.mode != .meetingDetails { calendarStore.clearDetails() }
-                if vm.mode != .rooms, vm.mode != .roomWindows { core.roomCoordinator.screensDidClose() }
+                if settings.calendarEnabled, vm.mode != .meetingDetails { calendarStore.clearDetails() }
+                if settings.windowManagementEnabled, vm.mode != .rooms, vm.mode != .roomWindows {
+                    core.roomCoordinator.screensDidClose()
+                }
                 // Leaving the screen any other way than Escape still ends the command's session.
-                if vm.mode != .extensionCommand, extensions.running != nil {
+                if settings.extensionsEnabled, vm.mode != .extensionCommand, extensions.running != nil {
                     Task { await extensions.stop() }
                 }
             }
@@ -773,7 +763,9 @@ struct RootPaletteView: View {
             Task { @MainActor in focusPendingArgument() }
         }
         .onChange(of: argumentFocused) { _, field in vm.noteEditingField(field != nil) }
-        .onChange(of: quickAI.pendingAttachments.map(\.id)) { refreshAttachmentsMenu() }
+        .onChange(of: settings.aiEnabled ? quickAI.pendingAttachments.map(\.id) : []) {
+            refreshAttachmentsMenu()
+        }
     }
 
     /// Mode-gated ahead of the cast, which would otherwise cost every other mode a list build.
@@ -921,7 +913,6 @@ struct RootPaletteView: View {
         // Floating controls, no bar; the edge dissolve ghosts the rows passing beneath.
         HStack(spacing: 0) {
             appMenuButton
-                .modifier(ExtensionToastSlot(extensions: extensions, showing: vm.mode == .extensionCommand))
             if showActionGroup {
                 actionGroup(
                     pillLabel: pillLabel, formPrimaryShortcut: formPrimaryShortcut,
@@ -949,7 +940,7 @@ struct RootPaletteView: View {
         HStack(spacing: 2) {
             BarButton(action: activateSelection) {
                 HStack(spacing: metrics.spacing.sm) {
-                    Text(pillLabel)
+                    Text(L10n.tr(pillLabel))
                         .font(metrics.typography.bar)
                         .foregroundStyle(pillTint)
                     if formPrimaryShortcut {
@@ -966,7 +957,7 @@ struct RootPaletteView: View {
             if showActions {
                 BarButton(action: toggleActions) {
                     HStack(spacing: metrics.spacing.sm) {
-                        Text("Actions")
+                        Text(L10n.tr("Actions"))
                             .font(metrics.typography.bar)
                             .foregroundStyle(Theme.Colors.textSecondary)
                         HStack(spacing: metrics.spacing.xxs) {

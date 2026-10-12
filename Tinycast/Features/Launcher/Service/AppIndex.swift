@@ -165,7 +165,7 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         alternateTitles.append(candidate)
     }
 
-    var kindLabel: String { ownerName ?? kind.descriptor.label }
+    var kindLabel: String { ownerName ?? L10n.tr(kind.descriptor.label) }
 
     /// The hotkey action for this entry, or nil when the entry has no addressable action.
     var hotKeyAction: HotKeyAction? {
@@ -320,7 +320,13 @@ extension AppEntry.Kind {
     }
 
     private static let categoryNames = allCases.map { kind in
-        (kind, [kind.descriptor.sectionTitle, kind.descriptor.label].map(FuzzyMatch.Candidate.init))
+        (
+            kind,
+            [
+                kind.descriptor.sectionTitle, kind.descriptor.label,
+                L10n.tr(kind.descriptor.sectionTitle), L10n.tr(kind.descriptor.label)
+            ].map(FuzzyMatch.Candidate.init)
+        )
     }
 
     static func named(by query: LauncherOrder.CategoryQuery) -> AppEntry.Kind? {
@@ -432,14 +438,15 @@ final class AppIndex {
 
     private var visibleCatalogEntries: [AppEntry] {
         CommandCatalog.all.filter {
-            guard let command = CommandCatalog.command(for: $0) else { return true }
-            return !hiddenCommands.contains(command) && !unlistedCommands.contains(command)
+            guard let command = CommandCatalog.command(for: $0) else { return false }
+            return ProductProfile.allowsCommand(command.rawValue) && !hiddenCommands.contains(command)
+                && !unlistedCommands.contains(command)
         }
     }
 
     /// Whether the feature behind a command is on, which is what its shortcut has to obey too.
     func isCommandEnabled(_ command: CommandID) -> Bool {
-        !hiddenCommands.contains(command)
+        ProductProfile.allowsCommand(command.rawValue) && !hiddenCommands.contains(command)
     }
 
     /// A feature's commands leave the Commands slice when it is off; `visible` restores them.
@@ -651,7 +658,8 @@ final class AppIndex {
                 $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
             }
             // Settings panes are `.appex` bundles, which carry no Spotlight alternate names.
-            let (panes, panesCache) = SettingsPaneScanner.scan(languages: languages, cache: paneCache)
+            let panes: [AppEntry] = []
+            let panesCache = paneCache
             // Named here, not at publish: romanizing a CJK index is ~50 ms of main-actor time.
             return (AppIndex.named(apps + panes), cache, panesCache)
         }
@@ -672,12 +680,13 @@ final class AppIndex {
             Self.named(meetingEntries) + discoveredEntries
             + Self.named(
                 extensionEntries + quicklinkEntries + appleShortcutEntries + snippetEntries
-                    + Self.systemActionEntries + windowLayoutEntries + windowRoomEntries
+                    + windowLayoutEntries + windowRoomEntries
                     + windowCommandEntries
                     + customWindowSizeEntries + customCommandEntries + quickActionEntries
                     + commandEntries)
-        guard updated != apps else { return }
-        apps = updated
+        let allowed = updated.filter { ProductProfile.kinds.contains($0.kind.rawValue) }
+        guard allowed != apps else { return }
+        apps = allowed
         entriesRevision &+= 1
     }
 

@@ -13,7 +13,7 @@ struct FallbacksSettingsView: View {
             Section {
                 let fallbacks = fallbacks
                 if fallbacks.isEmpty {
-                    Text("Nothing to offer — their features are off.")
+                    Text(L10n.tr("Nothing to offer — their features are off."))
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                 } else {
@@ -24,9 +24,12 @@ struct FallbacksSettingsView: View {
             } header: {
                 SettingsSectionHeader(.fallbacksFallbacks)
             } footer: {
-                Text("Shown below every search as “Use … with”. Includes quicklinks with an {argument}.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Text(
+                    L10n.tr(
+                        "Shown below every search as “Use … with”. Includes quicklinks with an {argument}.")
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

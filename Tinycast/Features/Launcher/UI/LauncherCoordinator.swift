@@ -8,17 +8,17 @@ final class LauncherCoordinator {
     private let paletteCoordinator: PaletteCoordinator
     private let settingsCoordinator: SettingsCoordinator
     private let customCommandCoordinator: CustomCommandCoordinator
-    private let systemActionCoordinator: SystemActionCoordinator
+    private var systemActionCoordinator: SystemActionCoordinator { core.systemActionCoordinator }
     private let quicklinkCoordinator: QuicklinkCoordinator
-    private let windowCommandCoordinator: WindowCommandCoordinator
-    private let windowLayoutCoordinator: WindowLayoutCoordinator
-    private let snippetCoordinator: SnippetCoordinator
-    private let fileSearchCoordinator: FileSearchCoordinator
-    private let menuSearchCoordinator: MenuSearchCoordinator
-    private let windowSwitchCoordinator: WindowSwitchCoordinator
-    private let notesCoordinator: NotesCoordinator
-    private let extensionCoordinator: ExtensionCoordinator
-    private let calendarCoordinator: CalendarCoordinator
+    private var windowCommandCoordinator: WindowCommandCoordinator { core.windowCommandCoordinator }
+    private var windowLayoutCoordinator: WindowLayoutCoordinator { core.windowLayoutCoordinator }
+    private var snippetCoordinator: SnippetCoordinator { core.snippetCoordinator }
+    private var fileSearchCoordinator: FileSearchCoordinator { core.fileSearchCoordinator }
+    private var menuSearchCoordinator: MenuSearchCoordinator { core.menuSearchCoordinator }
+    private var windowSwitchCoordinator: WindowSwitchCoordinator { core.windowSwitchCoordinator }
+    private var notesCoordinator: NotesCoordinator { core.notesCoordinator }
+    private var extensionCoordinator: ExtensionCoordinator { core.extensionCoordinator }
+    private var calendarCoordinator: CalendarCoordinator { core.calendarCoordinator }
     /// The backup commands only, which need the live stores to gather from and apply to.
     private unowned let core: AppCore
 
@@ -28,17 +28,7 @@ final class LauncherCoordinator {
         paletteCoordinator: PaletteCoordinator,
         settingsCoordinator: SettingsCoordinator,
         customCommandCoordinator: CustomCommandCoordinator,
-        systemActionCoordinator: SystemActionCoordinator,
         quicklinkCoordinator: QuicklinkCoordinator,
-        windowCommandCoordinator: WindowCommandCoordinator,
-        windowLayoutCoordinator: WindowLayoutCoordinator,
-        snippetCoordinator: SnippetCoordinator,
-        fileSearchCoordinator: FileSearchCoordinator,
-        menuSearchCoordinator: MenuSearchCoordinator,
-        windowSwitchCoordinator: WindowSwitchCoordinator,
-        notesCoordinator: NotesCoordinator,
-        extensionCoordinator: ExtensionCoordinator,
-        calendarCoordinator: CalendarCoordinator,
         core: AppCore
     ) {
         self.ranking = ranking
@@ -46,17 +36,7 @@ final class LauncherCoordinator {
         self.paletteCoordinator = paletteCoordinator
         self.settingsCoordinator = settingsCoordinator
         self.customCommandCoordinator = customCommandCoordinator
-        self.systemActionCoordinator = systemActionCoordinator
         self.quicklinkCoordinator = quicklinkCoordinator
-        self.windowCommandCoordinator = windowCommandCoordinator
-        self.windowLayoutCoordinator = windowLayoutCoordinator
-        self.snippetCoordinator = snippetCoordinator
-        self.fileSearchCoordinator = fileSearchCoordinator
-        self.menuSearchCoordinator = menuSearchCoordinator
-        self.windowSwitchCoordinator = windowSwitchCoordinator
-        self.notesCoordinator = notesCoordinator
-        self.extensionCoordinator = extensionCoordinator
-        self.calendarCoordinator = calendarCoordinator
         self.core = core
     }
 
@@ -65,6 +45,7 @@ final class LauncherCoordinator {
     func launch(
         _ app: AppEntry, searchQuery: String? = nil, arguments: [String: String] = [:]
     ) {
+        guard ProductProfile.kinds.contains(app.kind.rawValue) else { return }
         // A category word is no search for the row: learning it would rank the row under "s".
         if !CommandCatalog.isQueryDriven(app) {
             let term = searchQuery.flatMap {
@@ -164,6 +145,7 @@ final class LauncherCoordinator {
 
     /// The one funnel a built-in command runs through, from a palette row or its global shortcut.
     func runCommand(_ id: CommandID) {
+        guard ProductProfile.allowsCommand(id.rawValue), core.appIndex.isCommandEnabled(id) else { return }
         switch id {
         case .quickAI:
             core.quickAICoordinator.show()

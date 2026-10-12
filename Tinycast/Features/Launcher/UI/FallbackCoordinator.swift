@@ -42,6 +42,7 @@ final class FallbackCoordinator {
 
     /// The one funnel; each destination takes the query as the input it was already asking for.
     func run(_ fallback: Fallback, query: String) {
+        guard available.contains(fallback) else { return }
         switch fallback {
         case .builtin(.quickAI): core.quickAICoordinator.ask(query)
         case .builtin(.searchFiles): core.fileSearchCoordinator.show(query: query)
@@ -69,6 +70,7 @@ final class FallbackCoordinator {
     }
 
     private func isAvailable(_ builtin: Fallback.Builtin) -> Bool {
+        guard ProductProfile.allowsCommand(builtin.command.rawValue) else { return false }
         switch builtin {
         case .quickAI: return settings.aiEnabled
         case .searchFiles: return settings.fileSearchEnabled

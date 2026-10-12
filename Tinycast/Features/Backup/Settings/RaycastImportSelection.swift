@@ -37,13 +37,13 @@ struct RaycastImportSelection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             LazyVGrid(columns: Self.columns, alignment: .leading, spacing: Theme.Spacing.sm) {
-                ForEach(Self.categories) { category in
+                ForEach(Self.categories.filter { RaycastImportOptions.all.contains($0.option) }) { category in
                     Toggle(isOn: included(category.option)) {
                         HStack(spacing: Theme.Spacing.sm) {
                             Image(systemName: category.symbol)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 16)
-                            Text(category.label).lineLimit(1)
+                            Text(L10n.tr(category.label)).lineLimit(1)
                         }
                     }
                     .toggleStyle(.checkbox)
