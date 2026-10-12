@@ -82,7 +82,16 @@
 
 - **仅文档和仓库设置：** 检查差异、链接、脚本语法、配置效果；无需编译整个应用。
 - **Swift 或工程变更：** 按 `docs/testing.md` 运行相关测试、lint 和 Debug 构建；交付安装包前跑全套测试与核心人工流程。
-- 工具缺失时准确写明未验证项，不把“源码看起来没问题”写成编译/实测通过；需要 Xcode 26+ SDK 和宏工具链，单有 Command Line Tools 不够。
+- 工具缺失时准确写明未验证项，不把“源码看起来没问题”写成编译/实测通过；需要完整 Xcode SDK 和 SwiftUI 宏工具链，单有 Command Line Tools 不够。当前主机的 Xcode 27 安装/初始化状态以实际命令为准。
 - 行为变化同步更新 `docs/custom/PROJECT.md`；上游修复记录在 `docs/custom/UPSTREAM-FIXES.md`，包含 SHA、依赖、适配、验证和回退方式。
 - 首次发布前检查独立身份、更新源、配置迁移和许可证文件；上游发布工作流不直接用于本 Fork。
 - 保留 `LICENSE`、`NOTICE.md` 和上游来源。完成时说明改了什么、验证了什么、还有什么未完成。
+
+## 定制代码入口
+
+- `Platform/ProductProfile.swift` 集中声明允许的命令、种类、设置页、面板、热键与备份类别。恢复模块必须同时审查服务生命周期，不能只往名单里加一项。
+- `AppSettings` 的停用能力保留兼容属性，但不能由旧偏好/导入启用；`SettingsFileSchema.allowedKeys` 限制文件同步范围。
+- `AppCore.start` 只装配保留功能；不要从根 View 的 Environment、onChange 或页脚重新创建停用模块。
+- `Features/WebAI` 以普通快速链接保存网站，固定 UUID 便于设置页定位；备份与别名复用快速链接，不新增 AI 账户配置。
+- `L10n.tr` 在集中资源中查中文，英文作为回退；设置定位的原文键、数据 ID 和用户命名不能翻译。
+- `Scripts/build-custom.sh` 只做本地 arm64 签名打包；要求源码提交完整。`Scripts/setup-custom-signing.sh` 的私钥只保存在本机钥匙串。
