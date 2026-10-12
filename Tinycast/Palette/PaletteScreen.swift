@@ -206,7 +206,10 @@ extension PopoverMenuContent {
                 pendingTitle = nil
             }
             if let sectionTitle = original.sectionTitle { pendingTitle = sectionTitle }
-            guard let score = query.score(original.title) else { continue }
+            guard
+                let score = [query.score(original.title), query.score(original.displayTitle)]
+                    .compactMap({ $0 }).max()
+            else { continue }
 
             var item = original
             item.startsSection = pendingSection && !matches.isEmpty

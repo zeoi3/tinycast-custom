@@ -76,12 +76,14 @@ enum QuicklinkArgumentsAccessory {
         PopoverMenuContent(
             header: argument.title,
             items: argument.options.map { option in
-                PopoverMenuItem(
+                var item = PopoverMenuItem(
                     title: option,
                     icon: value.wrappedValue == option ? .symbol("checkmark") : .blank
                 ) {
                     value.wrappedValue = option
                 }
+                item.localizesTitle = false
+                return item
             })
     }
 }

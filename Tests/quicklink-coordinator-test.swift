@@ -17,6 +17,7 @@ struct QuicklinkCoordinatorTests {
         try editing()
         try await deleting()
         try revealing()
+        try verbatimOptions()
         print("\(passes) passed, \(failures) failed")
         if failures > 0 { exit(1) }
     }
@@ -239,6 +240,24 @@ struct QuicklinkCoordinatorTests {
         expect(QuicklinkLauncher.opened.count == 1, "one destination opens")
     }
 
+    static func verbatimOptions() throws {
+        let fixture = try Fixture(
+            link: "https://example.com/?q={argument name=\"Mode\" options=\"Delete,Settings\"}")
+        defer { fixture.cleanUp() }
+        guard let menu = fixture.accessory()?.optionsMenu("Mode") else {
+            expect(false, "argument options are available")
+            return
+        }
+        expect(menu.items.map(\.title) == ["Delete", "Settings"], "user-authored choices retain their text")
+        expect(
+            menu.items.allSatisfy { !$0.localizesTitle }, "choices never translate when matching a UI label")
+        menu.items[0].action()
+        expect(
+            QuicklinkArgumentsAccessory.values(
+                for: fixture.link, core: fixture.core, vm: fixture.core.palette)["Mode"] == "Delete",
+            "choosing an option preserves its exact value")
+    }
+
     static func expect(_ condition: Bool, _ message: String) {
         if condition {
             passes += 1
@@ -452,6 +471,7 @@ struct PaletteHeaderAccessory {
 
 struct PopoverMenuContent { let header: String; let items: [PopoverMenuItem] }
 struct PopoverMenuItem {
+    var localizesTitle = true
     enum Icon { case symbol(String), blank }
     let title: String
     let icon: Icon

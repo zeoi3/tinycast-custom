@@ -19,6 +19,9 @@ enum PopoverMenuIcon: Equatable {
 
 /// One menu row; both the render path and the key handlers address rows through these.
 struct PopoverMenuItem {
+    /// User-authored argument choices keep their exact spelling.
+    var localizesTitle = true
+    var displayTitle: String { localizesTitle ? L10n.tr(title) : title }
     let title: String
     let icon: PopoverMenuIcon
     let isLoading: Bool
@@ -385,7 +388,7 @@ private struct PopoverMenuRow: View {
                         MenuThumbnail(id: id, data: data)
                     }
                 }
-                Text(L10n.tr(item.title))
+                Text(item.displayTitle)
                     .font(metrics.typography.menuRow)
                     .foregroundStyle(item.isDestructive ? Color.red : Color.primary)
                     .lineLimit(1)
