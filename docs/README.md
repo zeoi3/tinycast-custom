@@ -1,3 +1,6 @@
+> 定制版请先读 [项目状态与计划](custom/PROJECT.md) 和 [维护手册](custom/MAINTENANCE.md)。
+> 下方文档描述上游实现，功能是否在定制版启用以根目录 AGENTS.md 为准。
+
 # Tinycast documentation
 
 Start with [`AGENTS.md`](../AGENTS.md) at the repo root — it is the short version, and it links here for

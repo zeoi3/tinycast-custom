@@ -1,142 +1,87 @@
-# Tinycast
+# Tinycast Custom — 项目协作规则
 
-A native macOS menu-bar launcher: fuzzy app launcher, global and per-app hotkeys, a text/image
-clipboard history, an inline calculator, a floating note, snippets, quicklinks, window management
-and an emoji picker. It also **runs Raycast extensions** natively, in JavaScriptCore.
-SwiftUI + AppKit, running as an accessory with no Dock icon (`LSUIElement`). Zero third-party
-dependencies.
+## 先理解这个项目
 
-## Posture: modern-first, always
+这是基于 Tinycast **v0.11.19** 的个人中文精简版，目标是让当前够用的功能更简单、稳定、低负担。
+**固定基线，按需修 Bug；不追随上游新增功能，不因上游重构而重构。**
 
-**Tinycast supports macOS 26 and later, with macOS 27 strongly preferred.** Swift 6+ with complete
-strict concurrency is required. Prefer the latest Swift patterns and modern Apple APIs.
+- 上游：https://github.com/abue-ammar/tinycast；主分支实际为 `main`，不是 `master`。
+- 基线提交：`126c998d87cd7e93bd5e3437098d9c646eb6a714`。
+- 定制维护分支：`custom/zh-cn-lite`；`upstream` 只用于读取上游，`origin` 指向用户自己的公开 Fork。
+- **当前阶段是规划与仓库初始化，应用代码仍是上游基线。中文化、模块停用、独立应用身份、网页 AI 尚未实现。** 每次工作后同步更新状态，不能把规划写成已完成。
+- 先读 [项目计划与状态](docs/custom/PROJECT.md)，涉及补丁时再读 [维护手册](docs/custom/MAINTENANCE.md)。
+- 本文件是定制版的协作入口。原有 `docs/` 描述上游实现；其中的“持续采用最新架构”和上游 PR 审批规则不要求本 Fork 跟进升级或先向原作者申请。
 
-Prefer current APIs and language features:
+## 用户协作约定
 
-- **Prefer the modern Apple API**, always. Observation over `ObservableObject`. `SMAppService` over
-  login-item shims.
-- **Prefer synchronous code.** Keep short UI and state operations synchronous on `@MainActor`.
-  Introduce concurrency only for genuinely asynchronous operations or blocking work that must leave
-  the main actor. Shared state alone does not justify `async`, a `Task`, or an actor. Preserve
-  synchronous callback returns and event ordering. When concurrency is needed, prefer structured
-  concurrency with clear ownership and cancellation. Strict concurrency checking enforces safety;
-  it does not require making operations asynchronous.
-- **Migrate, never wrap.** Adopt modern replacements directly and delete obsolete call sites. Do not
-  keep wrappers that only preserve an old spelling.
-- **A deprecated API is a defect**, not a warning to live with.
-- **Verify API and language-feature availability** against the SDK and compiler used by the build
-  and CI. Use direct availability checks where macOS 27+ APIs require them to preserve macOS 26 support.
-- **No compatibility layers, legacy workarounds or obsolete patterns.** No migration scaffolding,
-  support below macOS 26 or speculative fallbacks. Keep the implementation direct.
+- 使用中文，言简意赅。需求确实含糊时立即问清，确定的工作继续推进。
+- 优先 CLI、官方 API/MCP；非必要不使用 computer use。Figma 连接失败先报告，不自动改走界面操作。
+- 用户明确要求 demo 时快速验证想法，不反复打磨无关边界。
+- 提交总结用中文；不同目的分别提交，不混合中文化、功能精简、修 Bug 和仓库设置。
+- 新需求与上一项改动无关时，先提交已完成的上一项改动，再开始新任务；不擅自打包他人的未完成改动。
+- 拉取/合并主分支前，先检查并提交当前工作，保持工作区干净；没有变化时不用创建空提交。
+- **每次 push 前向用户确认目标仓库、分支和待推送内容；同一批内容已明确确认后不重复询问。** 登录、创建 Fork 不等于确认了尚未展示的提交。
+- 不向 `upstream` 推送；不擅自 force push、改写已发布历史、删除远程分支、发布安装包或升级整个上游。
+- 不要求 GitHub 与 ChatGPT 绑定；本项目使用本机 GitHub CLI 登录。密码、token、私钥不得写入代码、文档或聊天。
 
-Carbon is a deliberate capability-gap dependency rather than inertia: nothing modern registers a
-system-wide chord, and HIToolbox's TIS APIs remain the public input-source mechanism. Full reasoning in
-[standards.md](docs/standards.md#posture).
+## 已确定的产品范围
 
-## Where things are
+| 功能 | 首版决定 |
+| --- | --- |
+| 应用模糊搜索、启动，全局唤起、按应用快捷键 | 保留；保留已有中文名称/拼音检索基础 |
+| 计算器 | 保留数学运算；汇率、加密货币先关闭，不无故改写解析引擎 |
+| 快速链接、Apple 快捷指令、自定义 shell 命令 | 保留 |
+| 备份与导入，包括现有 Raycast 配置导入 | 保留；不能恢复被产品范围禁用的能力 |
+| AI | 首版网页入口；目标网站待明确；不假定所有网站支持自动填写或自动发送 |
+| 内置 AI 聊天、账户/模型接入、聊天历史、MCP | 首版关闭 |
+| 剪贴板历史 | **首版隐藏并停用**；不记录历史；系统正常复制粘贴以及快速链接读取当前剪贴板仍可用 |
+| 选中文字的 AI 快捷操作 | 延期；依赖 AI 服务，不把网页入口当作等价实现 |
+| Raycast 扩展运行时 | 低优先级、首版隐藏停用；用户自己不用，不为假设的其他用户提前开发 |
+| 文件搜索、字典、笔记、日历/会议、窗口管理、表情、片段、听写、摄像头、额外系统工具等 | 首版关闭相关入口与后台服务 |
 
-| Folder                   | Holds                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------- |
-| `Tinycast/App/`          | `@main`, `AppDelegate`, `AppCore` — the composition root                                |
-| `Tinycast/DesignSystem/` | shared visual primitives; `Theme.swift` is the only design-token source                 |
-| `Tinycast/Platform/`     | system shims: `Permissions`, `AppPaths`, `Signposts`, `NotificationToken`, …            |
-| `Tinycast/Palette/`      | the palette shell: panel, window controller, `RootPaletteView`, `PaletteScreen`         |
-| `Tinycast/Windows/`      | the non-palette AppKit surfaces: `Dialog/`, `HUD/`, `About/`, `AppWindowController`     |
-| `Tinycast/Features/`     | one folder per feature; larger ones split `Model/` `Service/` `UI/` `Settings/`         |
-| `Tests/`                 | the standalone harnesses — one Swift file each, no XCTest target                        |
-| `Scripts/`               | every executable script: test runner, data generators, packaging, linting, editor setup |
+新增能力默认不进入首版。通用设置、权限提示、必要的错误反馈仍保留。
 
-| Read it before you                                          | Doc                                                          |
-| ----------------------------------------------------------- | ------------------------------------------------------------ |
-| change how anything is wired or owned                       | [architecture.md](docs/architecture.md)                      |
-| write Swift — naming, style, concurrency, budgets, comments | [standards.md](docs/standards.md)                            |
-| claim a change is done                                      | [testing.md](docs/testing.md)                                |
-| build, run or regenerate data                               | [development.md](docs/development.md)                        |
-| add or restyle any view                                     | [ui.md](docs/ui.md)                                          |
-| touch one feature's internals                               | [features/](docs/features/) — each opens with its invariants |
-| package or ship a build                                     | [release.md](docs/release.md)                                |
+## 实现约束
 
-## Non-negotiables
+1. 用统一的产品功能范围约束入口、命令索引、设置搜索、热键、深度链接、启动服务和配置导入；不能只隐藏菜单。
+2. 有效启用状态应同时满足“产品允许”和“用户开启”。备份、旧设置、settings.json 都不能绕过产品限制。
+3. 保留模块源码便于参考修复；停用监听、计时器、后台任务、数据库和缓存；重对象按需创建。共享工具不能因关掉历史功能而误删。
+4. 模块之间仍按现有架构组织。不为追求零字节、删文件数量或一个新版本号做大规模重构。
+5. 中文化使用集中语言资源，覆盖界面、命令、设置搜索、提示和必要的权限说明；保留英文检索词。不要翻译稳定 ID、配置键、备份字段、用户命名或第三方内容。
+6. 定制应用必须使用独立 Bundle ID、数据目录和签名身份；正式标识尚待确定。不得覆盖官方版或直接复用官方自动更新渠道。
+7. 功能开关不等于内存收益。需要同条件比较冷启动、空闲、面板开关后的内存与 CPU，记录数据后再下结论。
 
-Never break these without an explicit task to do so. Anything feature-specific lives in that
-feature's doc, under its own `## Invariants`.
+## 架构与文件入口
 
-- **`AppCore` is the sole owner.** New long-lived state goes on `AppCore`, wired in `start()` — never a
-  competing singleton. Views reach a feature's **coordinator** through `@Environment`, not `AppCore`.
-- **A file under `Features/*/Model/` may not import AppKit or SwiftUI**, and takes every environment
-  fact — clock, filesystem, home directory, rates — as an injected parameter. The harnesses compile the
-  shipped sources, so this is enforced by compilation rather than convention.
-- **Swift 6 language mode: data-race violations are hard errors.** `@MainActor` is the default,
-  model values shared across isolation boundaries are `Sendable`, and exclusive ownership transfer
-  uses `sending`. Heavy or IO-bound work goes off-main. Prefer `@concurrent` async functions when work
-  must leave the caller's actor; use `Task.detached` when an independent task is needed. Do not add a
-  second actor.
-- **Async results can become stale across suspension.** Before applying them, validate cancellation,
-  operation identity and destination where they can change. Long-lived work has an owner and teardown;
-  detached or callback-backed work owned by a caller follows that caller's cancellation.
-- **Dark is the baseline, and a colour's dark branch is the literal it always was.** `Theme.Colors`
-  resolves per appearance through `ramp`/`adaptive`; every dark value is the `Color.white.opacity(…)`
-  the forced-dark build shipped, restated rather than re-derived. Retune a light branch freely — change
-  a dark one only when the task is to change Dark. `AppAppearance` drives `NSApp.appearance`, and
-  `.system` maps to `nil` so AppKit follows macOS on its own.
-- **Tinycast presents its own dialogs — never `NSAlert` or a system popover.** A question
-  goes through `DialogController`, a report through a HUD via `HUDPresenter`.
-- **A networked feature fetches on a private `.ephemeral`, `urlCache = nil` session**, never
-  `URLSession.shared`, so its own cache file stays the only copy on disk. `CurrencyRateStore` is the
-  reference — copy it rather than inventing a second shape. A flag that grants a capability is never
-  carried by a backup or by `settings.json`: `snippetsEnabled` is excluded from settings backups so an
-  import cannot grant keystroke listening.
-- **Extensions stay inside `Features/Extensions/`.** Every view, row, menu, geometry and sizing
-  constant an extension needs is written and owned there — never added to `DesignSystem/`, never bolted
-  onto `Theme`, and never lifted somewhere another feature can build on it. Another surface may render
-  one as an opaque box — `LauncherScreen` does exactly that with `ExtensionArgumentsAccessory` — but it
-  never reaches inside one. An extension renders untrusted third-party code whose shape we do not
-  control, so it must never be able to force a change on a launcher surface.
-  **Duplicating a view or a piece of layout maths to keep it here is the correct trade**, and the one
-  place the no-duplication rule yields. What _is_ shared: `Theme`'s base tokens (spacing, radius,
-  colour), `InterfaceMetrics` as the view over those same base tokens, `PopoverMenuItem` as a data
-  shape, and `Platform/`. What is never shared: anything with
-  "how an extension looks or moves" in it. `ExtensionActionsPanel` and `ExtensionGridGeometry` exist
-  precisely because the palette's own menu and the emoji grid must stay free to change without them.
-- **`AppEntry.Kind` is the only thing that says what an entry is.** One case per launcher section and
-  per `VisibilityStore` category — never re-derive a category by sniffing an entry ID. Which _pane_
-  lists a command is a separate fact, and `SettingsTab.ownedCommands` is the only place that states it.
-- **Generated files are never hand-edited.** `EmojiData.generated.swift` and
-  `Resources/EmojiKeywords/` come from `node Scripts/gen-emoji.js`, `CurrencyData.generated.swift` from `node Scripts/gen-currencies.js`,
-  `CountryZoneData.generated.swift` from `node Scripts/gen-countries.js`, and
-  `Resources/RaycastRuntime.generated.js` from `Scripts/raycast-runtime/build.mjs` — the runtime is
-  committed so building the app never needs Node.
-- **`DesignSystem/Scrolling/EdgeDissolve.swift` and `ThinScrollbar.swift` are off-limits.** Both are
-  tuned by eye against the palette's floating bars, so any edit is a visual regression. Needing to touch
-  one to fix a scroll bug means the real fix belongs elsewhere.
+| 路径 | 用途 |
+| --- | --- |
+| `Tinycast/App/AppCore.swift` | 唯一长期状态所有者和服务装配入口 |
+| `Tinycast/Features/Settings/` | 设置、设置搜索、功能状态 |
+| `Tinycast/Features/Launcher/` | 应用索引、命令、别名、可见性与检索 |
+| `Tinycast/Features/*/{Model,Service,UI,Settings}/` | 模型、系统操作、界面及协调器、功能设置 |
+| `Tinycast/Palette/` | 面板和导航 |
+| `Tinycast/DesignSystem/`、`Tinycast/Platform/` | 设计基础与平台能力 |
+| `Tests/`、`Scripts/` | 独立 Swift 测试和构建工具 |
+| `project.yml` | XcodeGen 工程来源；修改后生成并提交 xcodeproj |
+| `docs/custom/` | 本 Fork 的计划、状态、维护记录；后续接手优先读这里 |
 
-## Conventions worth knowing up front
+写 Swift 前阅读 `docs/standards.md`；改装配关系读 `docs/architecture.md`；改功能读相应 `docs/features/` 文档；改 UI 读 `docs/ui.md`。
 
-- **A new preference also gets a `SettingsFileKey`** and its binding in `SettingsFileSchema`, so the
-  opt-in `settings.json` mirror carries it; the exhaustive switch fails the build until it is bound.
-  See [settings-file.md](docs/features/settings-file.md).
-- **A type's suffix says what it _is_** — `Store`, `Coordinator`, `Controller`, `Manager`, `Engine`,
-  `Policy` and the rest each name a specific responsibility. **Semantic correctness always wins over
-  suffix consistency:** pick the suffix that describes the type honestly, add a new one when none fits,
-  and never rename a well-named type just to match the table.
-  Full table: [standards.md#naming](docs/standards.md#naming).
-- **Comments are rare, one line, and explain the _why_** — the gotcha or invariant, never the what.
-  **Never two in a row, never extended into a block**: if one line can't carry it, name a function,
-  constant or type instead. Cap 100 characters, delete rather than update, and never comment a change
-  you just made. Nothing lints this; get it right the first time.
-  Full rules: [standards.md#comments](docs/standards.md#comments).
-- **Debug builds are their own channel** — `Tinycast Dev.app` / `com.tinycast.app.dev` — so a local run
-  never shares prefs, caches, TCC grants or the login item with an installed copy. Anything newly
-  persisted must stay keyed by `Bundle.main.bundleIdentifier`.
-- **XcodeGen owns the project.** `Tinycast.xcodeproj` is committed but generated from `project.yml`;
-  after editing it, run `xcodegen generate` and commit both. No SwiftPM, and never `Bundle.module`.
+继续遵循这些已有工程边界：
 
-## Before you finish
+- Swift 6 严格并发；短小 UI/状态操作优先在 MainActor 同步执行，阻塞工作移出主线程；异步结果校验取消状态与目的地。
+- AppCore 统一持有长期状态；View 通过 Environment 使用协调器，不引入竞争单例。
+- `Features/*/Model/` 不得导入 AppKit、SwiftUI、Cocoa；环境事实通过参数注入。
+- 界面复用 Theme 和已有对话框/HUD；未经 UI 改动任务，不重调深色基线及滚动渐隐/滚动条。
+- 扩展相关实现留在 `Features/Extensions/` 内，不污染公共设计组件。
+- 生成文件只通过原生成器改动；新增偏好同时处理 SettingsFileKey、Schema 和备份规则。
+- 网络使用独立 ephemeral session；不用新缓存和新抽象重复已有职责。
 
-Each item is explained in [testing.md](docs/testing.md#definition-of-done).
+## 验证与交接
 
-- `./Scripts/run-tests.sh` passes.
-- The Debug build compiles with **no new warnings**.
-- `./Scripts/lint.sh` is clean.
-- `grep -rln 'import AppKit\|import SwiftUI\|import Cocoa' Tinycast/Features/*/Model/` returns nothing.
-- Any doc your change made wrong is fixed in the same commit.
+- **仅文档和仓库设置：** 检查差异、链接、脚本语法、配置效果；无需编译整个应用。
+- **Swift 或工程变更：** 按 `docs/testing.md` 运行相关测试、lint 和 Debug 构建；交付安装包前跑全套测试与核心人工流程。
+- 工具缺失时准确写明未验证项，不把“源码看起来没问题”写成编译/实测通过；需要 Xcode 26+ SDK 和宏工具链，单有 Command Line Tools 不够。
+- 行为变化同步更新 `docs/custom/PROJECT.md`；上游修复记录在 `docs/custom/UPSTREAM-FIXES.md`，包含 SHA、依赖、适配、验证和回退方式。
+- 首次发布前检查独立身份、更新源、配置迁移和许可证文件；上游发布工作流不直接用于本 Fork。
+- 保留 `LICENSE`、`NOTICE.md` 和上游来源。完成时说明改了什么、验证了什么、还有什么未完成。

@@ -1,3 +1,7 @@
+> 本文件保留上游贡献流程。为本定制版开发请先读 [AGENTS.md](AGENTS.md) 与
+> [维护手册](docs/custom/MAINTENANCE.md)；无需向原作者申请 approved 标签。
+> 只有向原仓库投稿时才按下方上游规则执行。
+
 # Contributing to Tinycast
 
 Check existing [issues](https://github.com/abue-ammar/tinycast/issues) and

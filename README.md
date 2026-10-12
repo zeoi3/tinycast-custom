@@ -1,3 +1,26 @@
+# Tinycast Custom · 中文精简版
+
+基于 [Tinycast v0.11.19](https://github.com/abue-ammar/tinycast/tree/v0.11.19) 的个人定制项目。
+**固定当前基线，按需引入 Bug 修复，不追随上游新增功能与大规模重构。**
+
+当前完成仓库规划与维护约定，**应用代码尚未精简或中文化，也没有定制安装包**。
+首版保留应用启动、快捷键、计算器、快速链接、Apple 快捷指令、自定义命令、备份导入；
+AI 使用网页入口，剪贴板历史与扩展运行时先隐藏停用。以上为已确定计划，不代表代码已经实现。
+
+- [协作规则与功能范围](AGENTS.md)
+- [项目状态和实施计划](docs/custom/PROJECT.md)
+- [维护与上游修复流程](docs/custom/MAINTENANCE.md)
+- [GitHub 同步与独立授权](docs/custom/GITHUB.md)
+- [上游修复台账](docs/custom/UPSTREAM-FIXES.md)
+
+新克隆执行 `./Scripts/setup-custom.sh` 配置本仓库的 Git 防误推规则。
+上游许可证和声明保留于 [LICENSE](LICENSE)、[NOTICE.md](NOTICE.md)。
+
+---
+
+下面保留的是**上游版本的原始介绍**，其中下载、Homebrew、更新和联系方式属于原项目；
+不要将其视为本定制版的安装方式、功能完成情况或联系方式。
+
 # Tinycast
 
 **A tiny, fully native macOS launcher. One hotkey, everything you reach for all day, under 100 MB of
