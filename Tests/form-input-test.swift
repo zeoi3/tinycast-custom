@@ -15,6 +15,8 @@ struct FormInputTests {
 
     static func main() {
         _ = NSApplication.shared
+        // Pixel assertions below look for light ink; never inherit the host's light appearance.
+        NSApp.appearance = NSAppearance(named: .darkAqua)
         testSingleLine()
         testCapAlignment()
         testTextArea()
