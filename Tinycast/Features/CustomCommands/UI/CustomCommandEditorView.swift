@@ -155,7 +155,7 @@ struct CustomCommandEditorView: View {
         }
         .tooltip("Choose an icon", alignment: .trailing, dismissOnPress: true)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Command icon")
+        .accessibilityLabel(L10n.tr("Command icon"))
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { showIconMenu() }
     }
@@ -182,8 +182,10 @@ struct CustomCommandEditorView: View {
                 FormTextInput(
                     text: $editor.workingDirectory, focused: focusBinding(.workingDirectory),
                     placeholder: "Home folder", label: "Run In", moveFocus: editor.advanceFocus)
-                action(.chooseDirectory, perform: coordinator.chooseWorkingDirectory) { Text("Choose…") }
-                    .padding(.horizontal, metrics.spacing.xl)
+                action(.chooseDirectory, perform: coordinator.chooseWorkingDirectory) {
+                    Text(L10n.tr("Choose…"))
+                }
+                .padding(.horizontal, metrics.spacing.xl)
             }
             .frame(height: metrics.size.dialogButtonHeight)
             .formFieldChrome(focused: focusedField == .workingDirectory || focusedField == .chooseDirectory)
@@ -204,7 +206,7 @@ struct CustomCommandEditorView: View {
                     )
                     .frame(height: metrics.size.dialogButtonHeight)
                     .formFieldChrome(focused: focusedField == .argumentName(id))
-                    Toggle("Optional", isOn: $argument.isOptional)
+                    Toggle(L10n.tr("Optional"), isOn: $argument.isOptional)
                         .toggleStyle(.checkbox)
                         .focusable()
                         .focused($focusedControl, equals: .argumentOptional(id))
@@ -215,7 +217,7 @@ struct CustomCommandEditorView: View {
                     action(.removeArgument(id), perform: { editor.removeArgument(id: id) }) {
                         Image(systemName: "minus.circle")
                     }
-                    .accessibilityLabel("Remove argument")
+                    .accessibilityLabel(L10n.tr("Remove argument"))
                 }
                 .id(CustomCommandEditorSession.Field.argumentName(id))
             }
@@ -223,7 +225,7 @@ struct CustomCommandEditorView: View {
                 HStack(spacing: metrics.spacing.sm) {
                     SymbolImage(name: "plus", size: metrics.scaled(Theme.Typography.menuSymbolSize))
                         .accessibilityHidden(true)
-                    Text("Add Argument")
+                    Text(L10n.tr("Add Argument"))
                 }
             }
             .id(CustomCommandEditorSession.Field.addArgument)

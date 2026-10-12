@@ -6,7 +6,7 @@ struct EmptyResults: View {
         VStack(spacing: 8) {
             Image(systemName: "magnifyingglass").font(.largeTitle)
                 .symbolRenderingMode(.hierarchical).foregroundStyle(.tertiary)
-            Text(text).foregroundStyle(.secondary)
+            Text(L10n.tr(text)).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

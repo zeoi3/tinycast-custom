@@ -27,7 +27,7 @@ if [ "${1:-}" = "--exec" ]; then
         exit 0
     }
     TIMEFORMAT=%1R
-    if ! compiled=$( { time swiftc -swift-version 6 "$opt" "$@" "Tests/$name.swift" -o "$BIN/$name" > "$BIN/$name.log" 2>&1; } 2>&1 ); then
+    if ! compiled=$( { time swiftc -swift-version 6 "$opt" "$@" Tinycast/Platform/L10n.swift "Tests/$name.swift" -o "$BIN/$name" > "$BIN/$name.log" 2>&1; } 2>&1 ); then
         fail "did not compile"
     fi
     { time "$BIN/$name" > "$BIN/$name.log" 2>&1; } 2> "$BIN/$name.time" &
@@ -93,7 +93,7 @@ run() {
     # `directory` to relative arguments, so a relative path there silently yields no index.
     if [ "$emit_db" -eq 1 ]; then
         local sources=()
-        for source in "$@" "Tests/$name.swift"; do sources+=("$PWD/$source"); done
+        for source in "$@" Tinycast/Platform/L10n.swift "Tests/$name.swift"; do sources+=("$PWD/$source"); done
         [ "$ran" -gt 1 ] && printf ',' >> "$DB"
         printf '{"directory":"%s","command":"swiftc -swift-version 6 -sdk %s' \
             "$PWD" "$(xcrun --show-sdk-path --sdk macosx)" >> "$DB"

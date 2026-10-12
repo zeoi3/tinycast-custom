@@ -46,7 +46,7 @@ struct CustomCommandPreview: View {
                 .edgeDissolve()
                 .thinScrollbar()
                 VStack(alignment: .leading, spacing: metrics.spacing.sm) {
-                    Text("Information")
+                    Text(L10n.tr("Information"))
                         .font(metrics.typography.sectionHeader)
                         .foregroundStyle(Theme.Colors.textSecondary)
                     VStack(spacing: 0) {

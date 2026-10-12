@@ -49,7 +49,9 @@ enum CommandID: String, CaseIterable, Sendable {
     case support = "command:support"
     case quit = "command:quit"
 
-    var name: String {
+    var name: String { L10n.tr(englishName) }
+
+    var englishName: String {
         switch self {
         case .quickAI: return "Quick AI"
         case .aiChat: return "AI Chat"

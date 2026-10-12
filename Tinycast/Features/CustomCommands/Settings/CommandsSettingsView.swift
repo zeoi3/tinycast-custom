@@ -30,7 +30,7 @@ struct CommandsSettingsView: View {
                     FeatureCommandRow(entry: entry)
                 }
                 if store.commands.isEmpty {
-                    Text("No custom commands yet.")
+                    Text(L10n.tr("No custom commands yet."))
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(sortedCommands) { command in
@@ -58,7 +58,7 @@ struct CommandsSettingsView: View {
                     SettingsRowTitle(.commandsCustomCommands, "Import Raycast Scripts")
                 }
             } footer: {
-                Text("Import reads a folder of Raycast script commands.")
+                Text(L10n.tr("Import reads a folder of Raycast script commands."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -90,7 +90,7 @@ private struct CustomCommandSettingsRow: View {
             if !command.showsInRootSearch {
                 Image(systemName: "eye.slash")
                     .foregroundStyle(.secondary)
-                    .help("Hidden from root search")
+                    .help(L10n.tr("Hidden from root search"))
             }
 
             // An alias only reaches the ranker through the launcher slice, so it dims with it.
@@ -105,7 +105,7 @@ private struct CustomCommandSettingsRow: View {
                 Image(systemName: "pencil")
             }
             .buttonStyle(.plain)
-            .help("Edit Custom Command")
+            .help(L10n.tr("Edit Custom Command"))
             .accessibilityLabel("Edit \(command.name)")
 
             Button(action: onDelete) {
@@ -113,13 +113,13 @@ private struct CustomCommandSettingsRow: View {
                     .foregroundStyle(.red)
             }
             .buttonStyle(.plain)
-            .help("Delete Custom Command")
+            .help(L10n.tr("Delete Custom Command"))
             .accessibilityLabel("Delete \(command.name)")
 
             Toggle("", isOn: $isEnabled)
                 .labelsHidden()
                 .toggleStyle(.checkbox)
-                .help("Enabled")
+                .help(L10n.tr("Enabled"))
                 .accessibilityLabel("Enable \(command.name)")
         }
     }

@@ -138,10 +138,10 @@ enum CustomCommandValidationError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .emptyName: return "Enter a name for the command."
-        case .emptyCommand: return "Enter a command to run."
-        case .duplicateName: return "A custom command with this name already exists."
-        case .invalidCharacter: return "Names and commands cannot contain null characters."
+        case .emptyName: return L10n.tr("Enter a name for the command.")
+        case .emptyCommand: return L10n.tr("Enter a command to run.")
+        case .duplicateName: return L10n.tr("A custom command with this name already exists.")
+        case .invalidCharacter: return L10n.tr("Names and commands cannot contain null characters.")
         }
     }
 }

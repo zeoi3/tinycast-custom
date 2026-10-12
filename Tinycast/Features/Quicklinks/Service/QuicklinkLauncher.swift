@@ -16,7 +16,7 @@ enum QuicklinkLauncher {
             case .missingFile(let path):
                 return "Nothing exists at \(path) any more."
             case .missingApplication:
-                return "The app this quicklink opens with isn't installed any more."
+                return L10n.tr("The app this quicklink opens with isn't installed any more.")
             case .openFailed(let target, let detail):
                 return "macOS could not open \(target).\n\n\(detail)"
             }

@@ -18,7 +18,7 @@ struct AppPickerPopover: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TextField("Search apps…", text: $query)
+            TextField(L10n.tr("Search apps…"), text: $query)
                 .textFieldStyle(.roundedBorder)
                 .padding(Theme.Spacing.md)
             Divider()

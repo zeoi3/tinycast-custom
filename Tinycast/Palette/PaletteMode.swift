@@ -61,11 +61,11 @@ enum PaletteMode: String, CaseIterable, Identifiable {
     }
     var placeholder: String {
         switch self {
-        case .launcher: return "Search for apps and commands…"
+        case .launcher: return L10n.tr("Search for apps and commands…")
         case .clipboard: return "Type to filter entries…"
         case .ai: return "Ask anything…"
         case .aiHistory: return "Search chats…"
-        case .calculatorHistory: return "Do math, convert units, or search your past calculations…"
+        case .calculatorHistory: return L10n.tr("Do math, convert units, or search your past calculations…")
         case .emoji: return "Search emoji and symbols…"
         case .fileSearch: return "Search files and folders…"
         case .menuSearch: return "Search menu bar items…"
@@ -75,16 +75,16 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .schedule: return "Search your schedule…"
         case .eventEditor: return "Event editor"
         case .customCommandEditor: return "Command editor"
-        case .customCommands: return "Search custom commands…"
+        case .customCommands: return L10n.tr("Search custom commands…")
         case .meetingDetails: return "Meeting details"
         case .uninstall: return "Filter files and folders by name…"
-        case .quicklinks: return "Search quicklinks…"
+        case .quicklinks: return L10n.tr("Search quicklinks…")
         case .quicklinkEditor: return "Quicklink editor"
         case .snippets: return "Search snippets…"
         case .snippetEditor: return "Snippet editor"
         case .dictionary: return "Look up a word…"
         // Replaced by the command's own `searchBarPlaceholder` whenever it declares one.
-        case .extensionCommand: return "Search…"
+        case .extensionCommand: return L10n.tr("Search…")
         }
     }
 }

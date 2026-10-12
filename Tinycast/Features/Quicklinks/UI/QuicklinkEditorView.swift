@@ -98,7 +98,7 @@ struct QuicklinkEditorView: View {
             if value.isEmpty {
                 EmptyView()
             } else if QuicklinkDestination.containsPlaceholder(value) {
-                Text("Resolved when you open it — placeholders are filled in first.")
+                Text(L10n.tr("Resolved when you open it — placeholders are filled in first."))
             } else if let destination = QuicklinkDestination.detect(value) {
                 Label {
                     Text(destination.displayText).lineLimit(1).truncationMode(.middle)
@@ -106,7 +106,7 @@ struct QuicklinkEditorView: View {
                     SymbolImage(name: destination.defaultSymbol, size: metrics.size.menuIcon)
                 }
             } else {
-                Text("This doesn't look like a URL, file path, or deeplink.")
+                Text(L10n.tr("This doesn't look like a URL, file path, or deeplink."))
                     .foregroundStyle(.orange)
             }
         }
@@ -115,7 +115,7 @@ struct QuicklinkEditorView: View {
     }
 
     private var insertMenu: some View {
-        Button("Insert…") {
+        Button(L10n.tr("Insert…")) {
             let items = [
                 placeholder("Argument", "{argument}"),
                 placeholder("Named Argument", "{argument name=\"Query\"}"),
@@ -137,7 +137,7 @@ struct QuicklinkEditorView: View {
             insertMenuFrame = $0
         }
         .tooltip("Insert a dynamic placeholder", alignment: .trailing, dismissOnPress: true)
-        .accessibilityLabel("Insert a placeholder")
+        .accessibilityLabel(L10n.tr("Insert a placeholder"))
     }
 
     private func placeholder(
@@ -200,7 +200,7 @@ struct QuicklinkEditorView: View {
         }
         .tooltip("Choose an icon", alignment: .trailing, dismissOnPress: true)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Quicklink icon")
+        .accessibilityLabel(L10n.tr("Quicklink icon"))
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { showIconMenu() }
     }
@@ -238,7 +238,7 @@ struct QuicklinkEditorView: View {
                     .frame(width: metrics.size.menuIcon, height: metrics.size.menuIcon)
                 Text(application.name).lineLimit(1)
             } else {
-                Text("Default app")
+                Text(L10n.tr("Default app"))
             }
             Spacer(minLength: 0)
             menuChevron(for: applicationMenuFrame)
@@ -261,7 +261,7 @@ struct QuicklinkEditorView: View {
         }
         .formFieldChrome(focused: focusedField == .application)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Open With")
+        .accessibilityLabel(L10n.tr("Open With"))
         .accessibilityValue(application?.name ?? "Default app")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { showApplicationMenu() }

@@ -16,13 +16,13 @@ struct SettingsRootView: View {
             SettingsDetailView()
                 .frame(minWidth: Theme.Size.settingsDetailMinimum)
         }
-        .navigationTitle(navigation.tab.title)
+        .navigationTitle(L10n.tr(navigation.tab.title))
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 ControlGroup {
-                    Button("Back", systemImage: "chevron.backward") { navigation.goBack() }
+                    Button(L10n.tr("Back"), systemImage: "chevron.backward") { navigation.goBack() }
                         .disabled(!navigation.canGoBack)
-                    Button("Forward", systemImage: "chevron.forward") { navigation.goForward() }
+                    Button(L10n.tr("Forward"), systemImage: "chevron.forward") { navigation.goForward() }
                         .disabled(!navigation.canGoForward)
                 }
                 .controlGroupStyle(.navigation)

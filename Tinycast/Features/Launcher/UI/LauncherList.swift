@@ -41,7 +41,7 @@ struct LauncherList: View {
 
         var sectionTitle: String {
             switch self {
-            case .calc: return "Calculator"
+            case .calc: return L10n.tr("Calculator")
             case .meeting: return "Meeting"
             case .color: return "Color"
             }

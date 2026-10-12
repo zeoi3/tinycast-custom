@@ -40,7 +40,7 @@ struct SettingsFeatureToggleLabel: View {
             VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
                 SettingsRowTitle(anchor, title)
                     .fontWeight(.semibold)
-                Text(subtitle)
+                Text(L10n.tr(subtitle))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -73,7 +73,7 @@ struct SettingsRow<Icon: View, Trailing: View>: View {
                 }
                 .lineLimit(1)
                 if let subtitle {
-                    Text(subtitle)
+                    Text(L10n.tr(subtitle))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(subtitleLineLimit)
@@ -205,7 +205,7 @@ struct SettingsEditorHeader: View {
             Text(title)
                 .font(Theme.Typography.panelTitle)
             if let subtitle {
-                Text(subtitle)
+                Text(L10n.tr(subtitle))
                     .font(Theme.Typography.rowTitle)
                     .foregroundStyle(Theme.Colors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -312,10 +312,10 @@ struct FeatureSwitchSection: View {
                         anchor: anchor, title: enableTitle, subtitle: enableSubtitle)
                 } else {
                     SettingsRowTitle(anchor, enableTitle)
-                    if let enableSubtitle { Text(enableSubtitle) }
+                    if let enableSubtitle { Text(L10n.tr(enableSubtitle)) }
                 }
             }
-            Toggle("Show in launcher", isOn: $showsInLauncher)
+            Toggle(L10n.tr("Show in launcher"), isOn: $showsInLauncher)
                 // The switch above stays live so the feature can always be turned back on.
                 .settingsEnabled(isEnabled)
         } header: {
@@ -336,7 +336,7 @@ struct SettingsFilterField: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
             // `prompt:` + `labelsHidden`, or the form makes the placeholder a left-column heading.
-            TextField("", text: $query, prompt: Text(prompt))
+            TextField("", text: $query, prompt: Text(L10n.tr(prompt)))
                 .textFieldStyle(.plain)
                 .labelsHidden()
                 .focused($focused)
@@ -466,7 +466,7 @@ struct AliasField: View {
         HStack(spacing: Theme.Spacing.xs) {
             ZStack(alignment: .leading) {
                 if draft.isEmpty {
-                    Text("Add Alias")
+                    Text(L10n.tr("Add Alias"))
                         .font(Theme.Typography.keyCap)
                         .foregroundStyle(Theme.Colors.textSecondary)
                         .allowsHitTesting(false)

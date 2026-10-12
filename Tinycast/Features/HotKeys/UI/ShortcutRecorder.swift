@@ -73,8 +73,8 @@ struct ShortcutRecorder: View {
                         .foregroundStyle(.orange)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Open Accessibility settings")
-                .help("Modifier-only hotkeys need Accessibility access. Click to grant it.")
+                .accessibilityLabel(L10n.tr("Open Accessibility settings"))
+                .help(L10n.tr("Modifier-only hotkeys need Accessibility access. Click to grant it."))
             }
             HStack(spacing: Theme.Spacing.xs) {
                 ForEach(Array(binding.recorderKeycaps.enumerated()), id: \.offset) { _, cap in

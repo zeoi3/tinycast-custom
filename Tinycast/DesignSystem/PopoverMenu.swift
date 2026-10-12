@@ -157,7 +157,7 @@ struct PopoverMenu: View {
                     headerLabel(header)
                     Color.clear.frame(height: metrics.size.menuRowSpacing)
                 }
-                Text("No Results")
+                Text(L10n.tr("No Results"))
                     .font(metrics.typography.menuRow)
                     .foregroundStyle(Theme.Colors.textTertiary)
                     .frame(maxWidth: .infinity)
@@ -385,7 +385,7 @@ private struct PopoverMenuRow: View {
                         MenuThumbnail(id: id, data: data)
                     }
                 }
-                Text(item.title)
+                Text(L10n.tr(item.title))
                     .font(metrics.typography.menuRow)
                     .foregroundStyle(item.isDestructive ? Color.red : Color.primary)
                     .lineLimit(1)

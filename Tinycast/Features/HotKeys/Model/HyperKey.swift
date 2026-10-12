@@ -14,7 +14,7 @@ enum HyperKeyPhysicalKey: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .none: return "None"
+        case .none: return L10n.tr("None")
         case .capsLock: return "Caps Lock (⇪)"
         case .rightControl: return "Right Control (⌃)"
         case .rightShift: return "Right Shift (⇧)"

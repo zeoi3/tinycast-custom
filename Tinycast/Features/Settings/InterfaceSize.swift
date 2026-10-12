@@ -10,9 +10,9 @@ enum InterfaceSize: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .standard: "Default"
-        case .large: "Large"
-        case .larger: "Larger"
+        case .standard: L10n.tr("Default")
+        case .large: L10n.tr("Large")
+        case .larger: L10n.tr("Larger")
         }
     }
 

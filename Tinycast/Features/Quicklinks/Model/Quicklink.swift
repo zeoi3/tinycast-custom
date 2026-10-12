@@ -96,8 +96,8 @@ enum QuicklinkSelectionFallback: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .ask: return "Ask for it"
-        case .clipboard: return "Use the clipboard"
+        case .ask: return L10n.tr("Ask for it")
+        case .clipboard: return L10n.tr("Use the clipboard")
         }
     }
 }
@@ -112,14 +112,14 @@ enum QuicklinkError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .emptyName: return "Enter a name for the quicklink."
-        case .emptyLink: return "Enter a link to open."
-        case .duplicateName: return "A quicklink with this name already exists."
+        case .emptyName: return L10n.tr("Enter a name for the quicklink.")
+        case .emptyLink: return L10n.tr("Enter a link to open.")
+        case .duplicateName: return L10n.tr("A quicklink with this name already exists.")
         case .unresolvableLink:
-            return "This doesn't look like a URL, file path, or deeplink."
-        case .invalidCharacter: return "Names and links cannot contain null characters."
+            return L10n.tr("This doesn't look like a URL, file path, or deeplink.")
+        case .invalidCharacter: return L10n.tr("Names and links cannot contain null characters.")
         case .storageUnavailable:
-            return "The quicklinks database could not be opened, so changes can't be saved."
+            return L10n.tr("The quicklinks database could not be opened, so changes can't be saved.")
         }
     }
 }

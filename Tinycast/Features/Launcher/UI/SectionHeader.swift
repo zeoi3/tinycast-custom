@@ -12,7 +12,7 @@ struct SectionHeader: View {
 
     var body: some View {
         HStack(spacing: metrics.spacing.sm) {
-            Text(title)
+            Text(L10n.tr(title))
                 .lineLimit(1)
             if let configure {
                 Button(action: configure) {

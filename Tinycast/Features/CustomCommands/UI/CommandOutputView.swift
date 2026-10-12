@@ -81,7 +81,7 @@ struct CommandOutputView: View {
                     .foregroundStyle(Theme.Colors.textTertiary)
                 Text(CommandDuration.text(from: run.startedAt, to: outcome.finishedAt))
             } else {
-                Text("Running")
+                Text(L10n.tr("Running"))
                 Text("·")
                     .foregroundStyle(Theme.Colors.textTertiary)
                 elapsed(from: run.startedAt)
@@ -114,7 +114,7 @@ struct CommandOutputView: View {
         if let hint = run.outcome?.hint {
             HStack(spacing: Theme.Spacing.sm) {
                 Text(hint)
-                Button("Open Settings") { presenter.showCommandSettings() }
+                Button(L10n.tr("Open Settings")) { presenter.showCommandSettings() }
                     .buttonStyle(.link)
             }
             .font(.callout)

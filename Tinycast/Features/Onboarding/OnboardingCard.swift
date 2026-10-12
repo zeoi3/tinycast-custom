@@ -46,10 +46,10 @@ struct OnboardingRow<Trailing: View>: View {
                     .frame(width: Theme.Size.settingsRowIcon)
             }
             VStack(alignment: .leading, spacing: Theme.Spacing.xs / 2) {
-                Text(title)
+                Text(L10n.tr(title))
                     .font(.body)
                 if let subtitle {
-                    Text(subtitle)
+                    Text(L10n.tr(subtitle))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)

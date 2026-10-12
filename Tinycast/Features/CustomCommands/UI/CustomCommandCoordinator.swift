@@ -372,8 +372,8 @@ final class CustomCommandCoordinator {
 
     private func summary(of result: ShellCommandResult) -> String {
         switch result.termination {
-        case .launchFailed: return "The shell could not be started."
-        case .stopped: return "Stopped"
+        case .launchFailed: return L10n.tr("The shell could not be started.")
+        case .stopped: return L10n.tr("Stopped")
         case .exited(let status):
             return status == 0 ? "Finished successfully." : "The command exited with status \(status)."
         }

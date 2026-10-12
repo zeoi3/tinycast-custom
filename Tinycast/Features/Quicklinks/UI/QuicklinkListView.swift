@@ -207,7 +207,7 @@ private struct QuicklinkInfoSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: metrics.spacing.sm) {
-            Text("Information")
+            Text(L10n.tr("Information"))
                 .font(metrics.typography.sectionHeader)
                 .foregroundStyle(.secondary)
             VStack(spacing: 0) {

@@ -10,9 +10,9 @@ enum AppAppearance: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .system: "System"
-        case .light: "Light"
-        case .dark: "Dark"
+        case .system: L10n.tr("System")
+        case .light: L10n.tr("Light")
+        case .dark: L10n.tr("Dark")
         }
     }
 

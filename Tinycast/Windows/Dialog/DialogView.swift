@@ -34,10 +34,10 @@ struct DialogView: View {
                 }
 
                 VStack(alignment: .leading, spacing: metrics.spacing.sm) {
-                    Text(request.title)
+                    Text(L10n.tr(request.title))
                         .font(metrics.typography.panelTitle)
                     if let message = request.message {
-                        Text(message)
+                        Text(L10n.tr(message))
                             .font(metrics.typography.rowTitle)
                             .foregroundStyle(Theme.Colors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -141,7 +141,7 @@ private struct DialogButton: View {
 
     var body: some View {
         Button(action: onActivate) {
-            Text(action.title)
+            Text(L10n.tr(action.title))
                 .fixedSize(horizontal: singleLine, vertical: false)
                 .multilineTextAlignment(.center)
         }

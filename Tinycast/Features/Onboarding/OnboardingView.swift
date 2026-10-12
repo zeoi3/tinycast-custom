@@ -59,9 +59,9 @@ struct OnboardingView: View {
         VStack(spacing: Theme.Spacing.md) {
             heroMark
             VStack(spacing: Theme.Spacing.xs) {
-                Text(title)
+                Text(L10n.tr(title))
                     .font(.title2.weight(.bold))
-                Text(subtitle)
+                Text(L10n.tr(subtitle))
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -87,8 +87,8 @@ struct OnboardingView: View {
 
     private var title: String {
         switch step {
-        case 0: "Welcome to Tinycast"
-        case 1: "Enable Pasting"
+        case 0: "Welcome to Tinycast Custom"
+        case 1: "Optional Accessibility Access"
         case 2: "Import from Raycast"
         default: "You're all set"
         }
@@ -97,8 +97,8 @@ struct OnboardingView: View {
     private var subtitle: String {
         switch step {
         case 0: "Set a shortcut to summon the launcher from anywhere."
-        case 1: "Let Tinycast paste items back into the app you were using."
-        case 2: "Bring your shortcuts, favorites, and clipboard history along."
+        case 1: "Used for Hyper Key remapping and selected-text quicklinks."
+        case 2: "Bring your shortcuts, favorites, aliases, and quicklinks along."
         default: readyMessage
         }
     }
@@ -121,9 +121,9 @@ struct OnboardingView: View {
 
     private var readyMessage: String {
         if let caps = hotKeys.binding(for: .togglePalette)?.keycaps {
-            return "Press \(caps.joined()) anytime to start using Tinycast."
+            return L10n.format("Press %@ anytime to start using Tinycast.", caps.joined())
         }
-        return "Tinycast is ready. Set a shortcut in Settings to summon it."
+        return L10n.tr("Tinycast is ready. Set a shortcut in Settings to summon it.")
     }
 
     // MARK: - Step content
@@ -169,7 +169,7 @@ struct OnboardingView: View {
                 OnboardingRow(
                     title: "Accessibility",
                     subtitle:
-                        "Allows pasting clipboard items and expanded snippets into active apps.",
+                        "Used for Hyper Key remapping and selected-text quicklinks.",
                     systemImage: "accessibility", tint: .blue
                 ) {
                     statusBadge
@@ -187,7 +187,7 @@ struct OnboardingView: View {
                     subtitle: model.fileSubtitle,
                     systemImage: "doc.badge.gearshape", tint: .orange
                 ) {
-                    Button("Choose…") { model.chooseFile() }.controlSize(.small)
+                    Button(L10n.tr("Choose…")) { model.chooseFile() }.controlSize(.small)
                 }
                 OnboardingDivider()
                 OnboardingRow(
@@ -195,7 +195,7 @@ struct OnboardingView: View {
                     subtitle: "The password you set when exporting from Raycast.",
                     systemImage: "key", tint: .gray
                 ) {
-                    RevealableSecureField(title: "Passphrase", text: $model.passphrase)
+                    RevealableSecureField(title: L10n.tr("Passphrase"), text: $model.passphrase)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 150)
                         .onSubmit { model.run(core: core) }
@@ -232,14 +232,14 @@ struct OnboardingView: View {
                     Button {
                         step -= 1
                     } label: {
-                        Label("Back", systemImage: "chevron.left")
+                        Label(L10n.tr("Back"), systemImage: "chevron.left")
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(.secondary)
                 }
                 Spacer()
                 if showsSkip {
-                    Button("Skip") { advance() }
+                    Button(L10n.tr("Skip")) { advance() }
                         .buttonStyle(.plain)
                         .foregroundStyle(.secondary)
                 }
@@ -248,14 +248,14 @@ struct OnboardingView: View {
                     } label: {
                         HStack(spacing: Theme.Spacing.sm) {
                             ProgressView().controlSize(.small)
-                            Text("Importing…")
+                            Text(L10n.tr("Importing…"))
                         }
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .disabled(true)
                 } else {
-                    Button(primaryTitle, action: primaryAction)
+                    Button(L10n.tr(primaryTitle), action: primaryAction)
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                         .disabled(primaryDisabled)
@@ -309,7 +309,7 @@ struct OnboardingView: View {
     // MARK: - Shared bits
 
     private func caption(_ text: String) -> some View {
-        Text(text)
+        Text(L10n.tr(text))
             .font(.caption)
             .foregroundStyle(.tertiary)
             .padding(.horizontal, Theme.Spacing.xs)
@@ -339,7 +339,7 @@ struct OnboardingView: View {
             Image(
                 systemName: accessibilityTrusted
                     ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-            Text(accessibilityTrusted ? "Granted" : "Not granted")
+            Text(L10n.tr(accessibilityTrusted ? "Granted" : "Not granted"))
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(accessibilityTrusted ? Color.green : Color.orange)
@@ -387,7 +387,7 @@ final class OnboardingModel {
 
     var fileSubtitle: String {
         guard let name = file?.lastPathComponent else {
-            return "Choose a .rayconfig file exported from Raycast v2.0 or newer."
+            return L10n.tr("Choose a .rayconfig file exported from Raycast v2.0 or newer.")
         }
         return "\(name) — \(isRaycastExport ? "Raycast export" : "not a Raycast export")"
     }

@@ -85,7 +85,7 @@ struct QuicklinksSettingsView: View {
         return Section {
             Toggle(isOn: $settings.quicklinkOpensNewWindow) {
                 SettingsRowTitle(.quicklinksBehaviour, "Open in a new window")
-                Text("Where the app supports it.")
+                Text(L10n.tr("Where the app supports it."))
             }
             Picker(selection: $settings.quicklinkSelectionFallback) {
                 ForEach(QuicklinkSelectionFallback.allCases) { option in
@@ -93,11 +93,11 @@ struct QuicklinksSettingsView: View {
                 }
             } label: {
                 SettingsRowTitle(.quicklinksBehaviour, "When there's no selected text")
-                Text("For links that use {selection}.")
+                Text(L10n.tr("For links that use {selection}."))
             }
             Toggle(isOn: $settings.quicklinkConfirmsBeforeDelete) {
                 SettingsRowTitle(.quicklinksBehaviour, "Confirm before deleting")
-                Text("From the launcher's Actions menu.")
+                Text(L10n.tr("From the launcher's Actions menu."))
             }
         } header: {
             SettingsSectionHeader(.quicklinksBehaviour)
@@ -107,17 +107,17 @@ struct QuicklinksSettingsView: View {
     private var transfer: some View {
         Section {
             LabeledContent {
-                Button("Import…") { Task { await coordinator.importQuicklinks() } }
+                Button(L10n.tr("Import…")) { Task { await coordinator.importQuicklinks() } }
             } label: {
                 SettingsRowTitle(.quicklinksImportExport, "Import quicklinks")
-                Text("From a JSON file; duplicates are skipped.")
+                Text(L10n.tr("From a JSON file; duplicates are skipped."))
             }
             LabeledContent {
-                Button("Export…") { Task { await coordinator.exportQuicklinks() } }
+                Button(L10n.tr("Export…")) { Task { await coordinator.exportQuicklinks() } }
                     .disabled(store.quicklinks.isEmpty)
             } label: {
                 SettingsRowTitle(.quicklinksImportExport, "Export quicklinks")
-                Text("To a JSON file.")
+                Text(L10n.tr("To a JSON file."))
             }
         } header: {
             SettingsSectionHeader(.quicklinksImportExport)
@@ -152,12 +152,12 @@ private struct QuicklinkSettingsRow: View {
             if quicklink.isPinned {
                 Image(systemName: "pin.fill")
                     .foregroundStyle(.secondary)
-                    .help("Pinned to the top")
+                    .help(L10n.tr("Pinned to the top"))
             }
             if !quicklink.showsInRootSearch {
                 Image(systemName: "eye.slash")
                     .foregroundStyle(.secondary)
-                    .help("Hidden from root search")
+                    .help(L10n.tr("Hidden from root search"))
             }
 
             // An alias only reaches the ranker through the root-search slice, so it dims with it.
@@ -172,7 +172,7 @@ private struct QuicklinkSettingsRow: View {
                 Image(systemName: "pencil")
             }
             .buttonStyle(.plain)
-            .help("Edit Quicklink")
+            .help(L10n.tr("Edit Quicklink"))
             .accessibilityLabel("Edit \(quicklink.name)")
 
             Button(action: onDelete) {
@@ -180,13 +180,13 @@ private struct QuicklinkSettingsRow: View {
                     .foregroundStyle(.red)
             }
             .buttonStyle(.plain)
-            .help("Delete Quicklink")
+            .help(L10n.tr("Delete Quicklink"))
             .accessibilityLabel("Delete \(quicklink.name)")
 
             Toggle("", isOn: $isEnabled)
                 .labelsHidden()
                 .toggleStyle(.checkbox)
-                .help("Enabled")
+                .help(L10n.tr("Enabled"))
                 .accessibilityLabel("Enable \(quicklink.name)")
         }
     }

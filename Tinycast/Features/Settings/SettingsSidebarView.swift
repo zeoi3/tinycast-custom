@@ -17,7 +17,7 @@ struct SettingsSidebarView: View {
                 found
             }
         }
-        .searchable(text: $query, isPresented: $searching, placement: .sidebar, prompt: "Search")
+        .searchable(text: $query, isPresented: $searching, placement: .sidebar, prompt: L10n.tr("Search"))
         .onExitCommand { query = "" }
         .background(focusShortcut)
     }
@@ -25,10 +25,10 @@ struct SettingsSidebarView: View {
     private var browse: some View {
         List(selection: selection) {
             ForEach(SettingsSection.allCases) { section in
-                Section(section.title) {
+                Section(L10n.tr(section.title)) {
                     ForEach(section.tabs) { tab in
                         Label {
-                            Text(tab.title)
+                            Text(L10n.tr(tab.title))
                         } icon: {
                             SettingsTabIcon(
                                 systemImage: tab.systemImage,
@@ -54,7 +54,7 @@ struct SettingsSidebarView: View {
         } else {
             // A second `List`, so result IDs and `SettingsTab` never share a selection namespace.
             List(selection: $highlighted) {
-                Section("Results") {
+                Section(L10n.tr("Results")) {
                     ForEach(results) { entry in
                         SettingsSearchResultRow(entry: entry).tag(entry.id)
                     }
@@ -71,7 +71,7 @@ struct SettingsSidebarView: View {
 
     /// ⌘F with no menu item to hang it on; zero-sized so it only ever contributes the shortcut.
     private var focusShortcut: some View {
-        Button("Search Settings") { searching = true }
+        Button(L10n.tr("Search Settings")) { searching = true }
             .keyboardShortcut("f", modifiers: .command)
             .buttonStyle(.plain)
             .frame(width: 0, height: 0)
@@ -94,7 +94,7 @@ private struct SettingsSearchResultRow: View {
     var body: some View {
         Label {
             VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
-                Text(entry.title).lineLimit(1)
+                Text(L10n.tr(entry.title)).lineLimit(1)
                 Text(entry.breadcrumb)
                     .font(.caption)
                     .foregroundStyle(.secondary)
