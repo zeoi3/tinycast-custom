@@ -2,7 +2,7 @@
 
 更新日期：2026-10-12。本文是后续接手入口；产品约束以根目录 `AGENTS.md` 为准。
 
-具体阶段、验收和打包交付见 [首版实现计划](IMPLEMENTATION.md)。用户已确认执行，目前正在实现与验证；尚未交付安装包。
+具体阶段、验收和打包交付见 [首版实现计划](IMPLEMENTATION.md)。首版 0.1.0 核心实现和安装包已完成，用户正在试用开发版。自动检查与人工确认的范围见 [验证记录](VALIDATION.md)。
 
 ## 定位与已作决定
 
@@ -24,11 +24,11 @@
 | 本地 Git 防误推设置 | 通过 `Scripts/setup-custom.sh` 配置；新克隆需重新执行 |
 | GitHub Fork 与首次推送 | 已完成；首个规划提交 `50f0f03` 已核对远程 SHA，默认分支为 `custom/zh-cn-lite`；后续同步状态以本地与远程 HEAD 为准 |
 | 中文界面与搜索本地化 | 已加入集中简体中文资源和核心界面接入；待完整界面验收 |
-| 功能范围统一约束、后台停用、按需初始化 | 已实现并通过 Debug 构建；正在完成全套测试和停用服务实测 |
+| 功能范围统一约束、后台停用、按需初始化 | 已实现；完整自动测试 94/94 通过，运行时检查见验证记录 |
 | 独立 Bundle ID、应用名称、签名、更新渠道 | 已设置 Tinycast Custom / io.github.zeoi3.tinycastcustom；本机签名已创建；移除官方更新入口 |
 | 网页 AI 入口 | 已接入快速链接；默认 ChatGPT，可选择网站；参数解析测试通过，待浏览器实测 |
-| 编译和实机验证 | Xcode 27.0 已初始化；Debug 构建、签名和主界面启动通过；Release 与最终测试进行中 |
-| 安装包 | 尚无定制版安装包 |
+| 编译和实机验证 | Debug、Release 构建及完整测试通过；主面板与网页 AI 设置已检查，外部交互待用户试用确认 |
+| 安装包 | 已生成 `build/TinycastCustom-0.1.0-arm64.dmg` 及同名 ZIP；本机自签名，未做 Apple 公证 |
 
 ## 实施顺序
 
@@ -86,4 +86,4 @@
 - 本地签名：`Scripts/setup-custom-signing.sh`；打包：`Scripts/build-custom.sh`。
 - 已通过：产品策略/网页 AI 请求解析独立测试；quicklink-coordinator-test；Swift 6 语法解析；设置搜索目标静态检查。
 - 首次全套预检期间源码发生变化，且 CLT 缺少 SwiftUI 宏；该运行不能作为基线或最终验收，日志为 `build/validation/preflight-incomplete.log`。
-- 完整 Xcode 已可用。验证详情以 [验证记录](VALIDATION.md) 为准；当前仍需完成最终测试、Release 安装包及资源对比。
+- 完整 Xcode 已可用。安装包与资源检查以 [验证记录](VALIDATION.md) 为准，不把未完成的人工流程记为通过。

@@ -8,7 +8,7 @@
 - 上游：https://github.com/abue-ammar/tinycast；主分支实际为 `main`，不是 `master`。
 - 基线提交：`126c998d87cd7e93bd5e3437098d9c646eb6a714`。
 - 定制维护分支：`custom/zh-cn-lite`；`upstream` 只用于读取上游，`origin` 指向用户自己的公开 Fork。
-- **当前阶段为首版实现中（用户已确认执行）。按 docs/custom/PROJECT.md 查看已完成项及未验证项。** 每次工作后同步更新状态，不能把规划写成已完成。
+- **当前阶段为首版 0.1.0 本地交付与试用。核心实现、安装包及自动检查已完成；按 docs/custom/PROJECT.md、VALIDATION.md 查看已验证项及待人工确认项。** 每次工作后同步更新状态，不能把规划写成已完成。
 - 先读 [项目计划与状态](docs/custom/PROJECT.md)，涉及补丁时再读 [维护手册](docs/custom/MAINTENANCE.md)。
 - 首版实施与交付按 [实现计划](docs/custom/IMPLEMENTATION.md)；用户确认计划后再开始应用功能开发。
 - 本文件是定制版的协作入口。原有 `docs/` 描述上游实现；其中的“持续采用最新架构”和上游 PR 审批规则不要求本 Fork 跟进升级或先向原作者申请。
